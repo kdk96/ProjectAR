@@ -1,0 +1,6 @@
+<resources>
+
+    <style name="AppTheme.Launcher">
+        <item name="android:windowBackground">@drawable/launcher_background</item>
+    </style>
+</resources>
