@@ -6,6 +6,9 @@ buildscript {
     ext.cicerone_version = '3.0.0'
     ext.rxjava_version = '2.2.0'
     ext.rxandroid_version = '2.1.0'
+    ext.rxbinding_version = '2.1.1'
+    ext.junit_version = '4.12'
+    ext.mockito_core_version = '2.21.0'
     repositories {
         google()
         jcenter()
@@ -13,6 +16,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.4'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.google.gms:google-services:4.0.2'
     }
 }
 

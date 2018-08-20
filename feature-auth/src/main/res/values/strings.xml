@@ -1,0 +1,21 @@
+<resources>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="create_account">Create account</string>
+    <string name="full_name">Full name</string>
+    <string name="password_confirmation">Password confirmation</string>
+    <string name="registration">Registration…</string>
+    <string name="empty_email_error">Enter email</string>
+    <string name="empty_name_error">Enter name</string>
+    <string name="empty_password_error">Enter password</string>
+    <string name="empty_password_confirmation_error">Enter password confirmation</string>
+    <string name="network_error">Network error</string>
+    <string name="invalid_email_error">Invalid email</string>
+    <string name="invalid_password_error">Invalid password</string>
+    <string name="invalid_new_password_error">Your password must be at least 8 characters (only latin letters and numbers), and include at least one lowercase letter, one uppercase letter and a number</string>
+    <string name="no_such_account_error">No such account</string>
+    <string name="passwords_do_not_match_error">Password must match confirmation password</string>
+    <string name="account_collision_error">Account with the given email already exists</string>
+</resources>
