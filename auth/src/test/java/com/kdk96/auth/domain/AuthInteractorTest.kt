@@ -15,6 +15,8 @@ class AuthInteractorTest {
         private const val INCORRECT_TEST_EMAIL = "johndoe"
         private const val CORRECT_TEST_PASSWORD = "Chupakabra442"
         private const val INCORRECT_TEST_PASSWORD = "incorrectPassword"
+        private const val CORRECT_TEST_NAME = "John Doe"
+        private const val CORRECT_TEST_PASSWORD_CONFIRMATION = "Chupakabra442"
     }
 
     @get:Rule
@@ -68,5 +70,39 @@ class AuthInteractorTest {
         val testCompletable = authInteractor.signIn(CORRECT_TEST_EMAIL, INCORRECT_TEST_PASSWORD).test()
         testCompletable.assertError(InvalidFieldException::class.java)
                 .assertErrorMessage("fields: ${FieldName.PASSWORD.name}")
+    }
+
+    @Test
+    fun sign_up_success() {
+        `when`(authRepository.register(CORRECT_TEST_EMAIL, CORRECT_TEST_PASSWORD, CORRECT_TEST_NAME))
+                .thenReturn(Completable.complete())
+        val testCompletable = authInteractor.signUp(CORRECT_TEST_EMAIL, CORRECT_TEST_NAME, CORRECT_TEST_PASSWORD, CORRECT_TEST_PASSWORD_CONFIRMATION).test()
+        testCompletable.assertComplete()
+    }
+
+    @Test
+    fun sign_up_invalid_email_exception() {
+        `when`(authRepository.register(INCORRECT_TEST_EMAIL, CORRECT_TEST_PASSWORD, CORRECT_TEST_NAME))
+                .thenReturn(Completable.error(InvalidFieldException(setOf(FieldName.EMAIL))))
+        val testCompletable = authInteractor.signUp(INCORRECT_TEST_EMAIL, CORRECT_TEST_NAME, CORRECT_TEST_PASSWORD, CORRECT_TEST_PASSWORD_CONFIRMATION).test()
+        testCompletable.assertError(InvalidFieldException::class.java)
+                .assertErrorMessage("fields: ${FieldName.EMAIL.name}")
+    }
+
+    @Test
+    fun sign_up_invalid_password_exception() {
+        `when`(authRepository.register(CORRECT_TEST_EMAIL, INCORRECT_TEST_PASSWORD, CORRECT_TEST_NAME))
+                .thenReturn(Completable.error(InvalidFieldException(setOf(FieldName.PASSWORD))))
+        val testCompletable = authInteractor.signUp(CORRECT_TEST_EMAIL, CORRECT_TEST_NAME, INCORRECT_TEST_PASSWORD, CORRECT_TEST_PASSWORD_CONFIRMATION).test()
+        testCompletable.assertError(InvalidFieldException::class.java)
+                .assertErrorMessage("fields: ${FieldName.PASSWORD.name}")
+    }
+
+    @Test
+    fun sign_up_account_collision_exception() {
+        `when`(authRepository.register(CORRECT_TEST_EMAIL, CORRECT_TEST_PASSWORD, CORRECT_TEST_NAME))
+                .thenReturn(Completable.error(AccountCollisionException()))
+        val testCompletable = authInteractor.signUp(CORRECT_TEST_EMAIL, CORRECT_TEST_NAME, CORRECT_TEST_PASSWORD, CORRECT_TEST_PASSWORD_CONFIRMATION).test()
+        testCompletable.assertError(AccountCollisionException::class.java)
     }
 }

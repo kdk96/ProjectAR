@@ -15,4 +15,11 @@ class AuthInteractor @Inject constructor(
     fun signIn(email: String, password: String) = Completable.fromAction {
         authDataValidator.validateSignInData(email, password)
     }.andThen(authRepository.authorize(email, password))
+
+    fun signUp(email: String,
+               name: String,
+               password: String,
+               passwordConfirmation: String) = Completable.fromAction {
+        authDataValidator.validateSignUpData(email, name, password, passwordConfirmation)
+    }.andThen(authRepository.register(email, password, name))
 }

@@ -1,11 +1,9 @@
 package com.kdk96.auth.data.network
 
 import com.google.firebase.FirebaseNetworkException
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.FirebaseAuthInvalidUserException
-import com.google.firebase.auth.SignInMethodQueryResult
+import com.google.firebase.auth.*
 import com.kdk96.auth.data.repository.AuthApi
+import com.kdk96.auth.domain.AccountCollisionException
 import com.kdk96.auth.domain.FieldName
 import com.kdk96.auth.domain.InvalidFieldException
 import com.kdk96.auth.domain.NoSuchAccountException
@@ -46,6 +44,27 @@ class FirebaseAuthApi : AuthApi {
             is FirebaseAuthInvalidCredentialsException ->
                 emitter.tryOnError(InvalidFieldException(setOf(FieldName.PASSWORD)))
             is FirebaseNetworkException -> emitter.tryOnError(IOException())
+        }
+    }
+
+    override fun register(email: String, password: String, name: String) = Completable.create { emitter ->
+        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
+                .continueWith { updateName(it.result.user, name) }
+                .addOnSuccessListener { emitter.onComplete() }
+                .addOnFailureListener { onRegisterFailure(emitter, it) }
+    }
+
+    private fun updateName(user: FirebaseUser, name: String) =
+            user.updateProfile(UserProfileChangeRequest.Builder().setDisplayName(name).build())
+
+    private fun onRegisterFailure(emitter: CompletableEmitter, exception: Exception) {
+        when (exception) {
+            is FirebaseNetworkException -> emitter.tryOnError(IOException())
+            is FirebaseAuthInvalidCredentialsException ->
+                emitter.tryOnError(InvalidFieldException(setOf(FieldName.EMAIL)))
+            is FirebaseAuthWeakPasswordException ->
+                emitter.tryOnError(InvalidFieldException(setOf(FieldName.PASSWORD)))
+            is FirebaseAuthUserCollisionException -> emitter.tryOnError(AccountCollisionException())
         }
     }
 }

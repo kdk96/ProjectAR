@@ -12,4 +12,7 @@ class AuthRepository @Inject constructor(
 
     fun authorize(email: String, password: String) =
             authApi.authorize(email, password).subscribeOn(ioScheduler)
+
+    fun register(email: String, password: String, name: String) =
+            authApi.register(email, password, name).subscribeOn(ioScheduler)
 }

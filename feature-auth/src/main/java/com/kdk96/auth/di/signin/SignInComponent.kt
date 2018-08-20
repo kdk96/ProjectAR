@@ -1,5 +1,6 @@
 package com.kdk96.auth.di.signin
 
+import com.kdk96.auth.di.AuthDependencies
 import com.kdk96.auth.domain.AuthInteractor
 import com.kdk96.auth.presentation.signin.SignInPresenter
 import com.kdk96.auth.ui.SignInFragment
@@ -18,7 +19,7 @@ annotation class SignInScope
 @SignInScope
 @dagger.Component(
         modules = [SignInModule::class],
-        dependencies = [SignInDependencies::class]
+        dependencies = [AuthDependencies::class]
 )
 interface SignInComponent : Component {
     fun inject(signInFragment: SignInFragment)

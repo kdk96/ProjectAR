@@ -1,7 +1,7 @@
 package com.kdk96.auth.domain
 
 enum class FieldName {
-    EMAIL, PASSWORD
+    EMAIL, PASSWORD, NAME, PASSWORD_CONFIRMATION
 }
 
 abstract class FieldException(val fields: Set<FieldName>) : RuntimeException(

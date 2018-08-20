@@ -43,7 +43,7 @@ class SignInFragment : BaseFragment(), SignInView {
     }
 
     override fun buildComponent() = DaggerSignInComponent.builder()
-            .signInDependencies(findComponentDependencies())
+            .authDependencies(findComponentDependencies())
             .build()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
