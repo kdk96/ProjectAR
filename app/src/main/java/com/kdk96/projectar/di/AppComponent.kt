@@ -1,11 +1,14 @@
 package com.kdk96.projectar.di
 
 import android.content.Context
+import com.kdk96.auth.di.AuthDependencies
 import com.kdk96.common.di.ChildComponents
 import com.kdk96.common.di.ComponentDependencies
 import com.kdk96.common.di.ComponentDependenciesKey
 import com.kdk96.common.di.Rx
 import com.kdk96.projectar.App
+import com.kdk96.projectar.di.auth.AuthApiModule
+import com.kdk96.projectar.di.auth.AuthModule
 import com.kdk96.projectar.di.main.MainDependencies
 import dagger.*
 import dagger.multibindings.IntoMap
@@ -20,9 +23,11 @@ import javax.inject.Singleton
     AppModule::class,
     SchedulersModule::class,
     NavigationModule::class,
-    ComponentDependenciesModule::class
+    ComponentDependenciesModule::class,
+    AuthApiModule::class,
+    AuthModule::class
 ])
-interface AppComponent : MainDependencies {
+interface AppComponent : MainDependencies, AuthDependencies {
     @Component.Builder
     interface Builder {
         @BindsInstance
@@ -81,4 +86,9 @@ interface ComponentDependenciesModule {
     @IntoMap
     @ComponentDependenciesKey(MainDependencies::class)
     fun provideMainDependencies(appComponent: AppComponent): ComponentDependencies
+
+    @Binds
+    @IntoMap
+    @ComponentDependenciesKey(AuthDependencies::class)
+    fun provideSignInDependencies(appComponent: AppComponent): ComponentDependencies
 }
