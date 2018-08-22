@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '1.2.60'
+    ext.kotlin_version = '1.2.61'
     ext.support_version = '28.0.0-rc01'
     ext.dagger_version = '2.17'
     ext.moxy_version = '1.5.3'
@@ -8,7 +8,8 @@ buildscript {
     ext.rxandroid_version = '2.1.0'
     ext.rxbinding_version = '2.1.1'
     ext.junit_version = '4.12'
-    ext.mockito_core_version = '2.21.0'
+    ext.mockito_version = '2.21.0'
+    ext.retrofit_version = '2.4.0'
     repositories {
         google()
         jcenter()

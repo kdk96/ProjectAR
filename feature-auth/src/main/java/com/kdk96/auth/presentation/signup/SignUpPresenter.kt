@@ -23,7 +23,6 @@ class SignUpPresenter @Inject constructor(
     private var passwordConfirmation = ""
 
     override fun onFirstViewAttach() {
-        super.onFirstViewAttach()
         viewState.setEmail(email)
     }
 
