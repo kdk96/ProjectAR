@@ -22,4 +22,6 @@ class AuthInteractor @Inject constructor(
                passwordConfirmation: String) = Completable.fromAction {
         authDataValidator.validateSignUpData(email, name, password, passwordConfirmation)
     }.andThen(authRepository.register(email, password, name))
+
+    fun isSignedIn() = authRepository.isSignedIn()
 }

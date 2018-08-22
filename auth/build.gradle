@@ -18,5 +18,5 @@ dependencies {
     implementation project(':common')
     api project(':auth-api')
     testImplementation "junit:junit:$junit_version"
-    testImplementation "org.mockito:mockito-core:$mockito_core_version"
+    testImplementation "org.mockito:mockito-inline:$mockito_version"
 }
