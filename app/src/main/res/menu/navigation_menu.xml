@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group
+        android:id="@+id/quests_group"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/quests"
+            android:checked="true"
+            android:icon="@drawable/ic_quests"
+            android:title="@string/quests" />
+        <item
+            android:id="@+id/prizes"
+            android:icon="@drawable/ic_prizes"
+            android:title="@string/prizes" />
+    </group>
+    <group
+        android:id="@+id/account_group"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/settings"
+            android:icon="@drawable/ic_settings"
+            android:title="@string/settings" />
+    </group>
+</menu>

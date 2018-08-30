@@ -2,18 +2,17 @@ package com.kdk96.common.ui
 
 import android.os.Bundle
 import com.arellomobile.mvp.MvpAppCompatActivity
-import com.kdk96.common.di.*
+import com.kdk96.common.di.Component
+import com.kdk96.common.di.ComponentManager
+import com.kdk96.common.di.HasComponent
+import com.kdk96.common.di.getComponent
 import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.NavigatorHolder
-import javax.inject.Inject
 
 abstract class BaseActivity : MvpAppCompatActivity(), HasComponent, ComponentManager {
     protected abstract val layoutRes: Int
-    @Inject
-    override lateinit var components: ChildComponents
-    @Inject
-    lateinit var navigatorHolder: NavigatorHolder
-    abstract val navigator: Navigator
+    abstract val navigatorHolder: NavigatorHolder
+    protected abstract val navigator: Navigator
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,8 +35,8 @@ abstract class BaseActivity : MvpAppCompatActivity(), HasComponent, ComponentMan
     }
 
     override fun onDestroy() {
-        if (isFinishing) clearComponent()
         super.onDestroy()
+        if (isFinishing) clearComponent()
     }
 
     private fun clearComponent() {

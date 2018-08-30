@@ -2,10 +2,10 @@ package com.kdk96.auth.presentation.signup
 
 import com.arellomobile.mvp.InjectViewState
 import com.kdk96.auth.domain.*
-import com.kdk96.auth.presentation.AuthRoutes
 import com.kdk96.auth.screen.R
 import com.kdk96.common.di.Rx
 import com.kdk96.common.presentation.BasePresenter
+import com.kdk96.common.presentation.Screens
 import io.reactivex.Scheduler
 import ru.terrakok.cicerone.Router
 import java.io.IOException
@@ -54,7 +54,7 @@ class SignUpPresenter @Inject constructor(
             interactor.signUp(email, name, password, passwordConfirmation)
                     .observeOn(mainThreadScheduler)
                     .doOnSubscribe { viewState.showProgress(true) }
-                    .subscribe({ router.newRootScreen(AuthRoutes.MAIN_SCREEN) },
+                    .subscribe({ router.newRootScreen(Screens.QUESTS_SCREEN) },
                             {
                                 viewState.showProgress(false)
                                 onError(it)
@@ -83,6 +83,7 @@ class SignUpPresenter @Inject constructor(
                     viewState.showPasswordConfirmationError(R.string.passwords_do_not_match_error)
             }
             is AccountCollisionException -> viewState.showEmailError(R.string.account_collision_error)
+            else -> viewState.showError(R.string.unknown_error)
         }
     }
 

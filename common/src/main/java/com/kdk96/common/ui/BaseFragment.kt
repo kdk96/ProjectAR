@@ -11,7 +11,7 @@ abstract class BaseFragment : MvpAppCompatFragment(), HasComponent {
         private const val TAG_PROGRESS = "progress"
     }
 
-    abstract val layoutRes: Int
+    protected abstract val layoutRes: Int
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
             inflater.inflate(layoutRes, container, false)
@@ -23,7 +23,7 @@ abstract class BaseFragment : MvpAppCompatFragment(), HasComponent {
 
     protected abstract fun buildComponent(): Component
 
-    open fun showProgressDialog(show: Boolean, resId: Int? = null) {
+    protected fun showProgressDialog(show: Boolean, resId: Int? = null) {
         if (!isAdded) return
         var progressDialog = childFragmentManager.findFragmentByTag(TAG_PROGRESS)
         if (progressDialog == null && show) {
@@ -48,9 +48,9 @@ abstract class BaseFragment : MvpAppCompatFragment(), HasComponent {
         if (isRemoving || anyParentIsRemoving) clearComponent()
     }
 
-    protected fun clearComponent() {
+    private fun clearComponent() {
         findComponentManager().components.remove(this.javaClass)
     }
 
-    open fun onBackPressed() = Unit
+    abstract fun onBackPressed()
 }

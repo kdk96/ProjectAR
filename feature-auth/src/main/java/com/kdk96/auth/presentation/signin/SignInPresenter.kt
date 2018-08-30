@@ -2,10 +2,10 @@ package com.kdk96.auth.presentation.signin
 
 import com.arellomobile.mvp.InjectViewState
 import com.kdk96.auth.domain.*
-import com.kdk96.auth.presentation.AuthRoutes
 import com.kdk96.auth.screen.R
 import com.kdk96.common.di.Rx
 import com.kdk96.common.presentation.BasePresenter
+import com.kdk96.common.presentation.Screens
 import io.reactivex.Scheduler
 import ru.terrakok.cicerone.Router
 import java.io.IOException
@@ -44,7 +44,7 @@ class SignInPresenter @Inject constructor(
     fun onSignInClick(email: String, password: String) = interactor.signIn(email, password)
             .observeOn(mainThreadScheduler)
             .doOnSubscribe { viewState.showProgress(true) }
-            .subscribe({ router.newRootScreen(AuthRoutes.MAIN_SCREEN) },
+            .subscribe({ router.newRootScreen(Screens.QUESTS_SCREEN) },
                     {
                         viewState.showProgress(false)
                         onError(it)
@@ -67,10 +67,11 @@ class SignInPresenter @Inject constructor(
                     viewState.showPasswordError(R.string.invalid_password_error)
             }
             is NoSuchAccountException -> viewState.showEmailError(R.string.no_such_account_error)
+            else -> viewState.showError(R.string.unknown_error)
         }
     }
 
-    fun onSignUpClick() = router.navigateTo(AuthRoutes.SIGN_UP_SCREEN, email)
+    fun onSignUpClick() = router.navigateTo(Screens.SIGN_UP_SCREEN, email)
 
     fun onBackPressed() = router.exit()
 }
