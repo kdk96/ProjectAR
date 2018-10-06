@@ -2,9 +2,8 @@ package com.kdk96.auth.domain
 
 import com.kdk96.auth.data.repository.AuthRepository
 import io.reactivex.Completable
-import javax.inject.Inject
 
-class AuthInteractor @Inject constructor(
+class AuthInteractor(
         private val authDataValidator: AuthDataValidator,
         private val authRepository: AuthRepository
 ) {
@@ -22,6 +21,4 @@ class AuthInteractor @Inject constructor(
                passwordConfirmation: String) = Completable.fromAction {
         authDataValidator.validateSignUpData(email, name, password, passwordConfirmation)
     }.andThen(authRepository.register(email, password, name))
-
-    fun isSignedIn() = authRepository.isSignedIn()
 }

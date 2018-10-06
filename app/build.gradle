@@ -32,5 +32,8 @@ dependencies {
     implementation project(':auth')
     implementation project(':firebase-auth-api')
     implementation project(':feature-auth')
+    implementation project(':feature-settings')
+    implementation project(':glide')
     implementation "com.android.support:design:$support_version"
+    implementation "com.github.bumptech.glide:glide:$glide_version"
 }

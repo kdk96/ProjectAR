@@ -1,13 +1,11 @@
 package com.kdk96.auth.data.repository
 
 import com.kdk96.auth.data.storage.AuthHolder
-import com.kdk96.common.di.Rx
 import io.reactivex.Scheduler
-import javax.inject.Inject
 
-class AuthRepository @Inject constructor(
+class AuthRepository(
         private val authApi: AuthApi,
-        @Rx.Io private val ioScheduler: Scheduler,
+        private val ioScheduler: Scheduler,
         private val authHolder: AuthHolder
 ) {
     fun checkEmail(email: String) = authApi.checkEmail(email).subscribeOn(ioScheduler)
@@ -19,6 +17,4 @@ class AuthRepository @Inject constructor(
     fun register(email: String, password: String, name: String) = authApi.register(email, password, name)
             .doOnSuccess { authHolder.saveAuthData(it) }
             .subscribeOn(ioScheduler).ignoreElement()
-
-    fun isSignedIn() = !authHolder.accessToken.isNullOrEmpty()
 }

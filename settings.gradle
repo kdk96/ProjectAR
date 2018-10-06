@@ -1,1 +1,1 @@
-include ':common', ':app', ':feature-auth', ':auth', ':auth-api', ':firebase-auth-api'
+include ':common', ':app', ':feature-auth', ':auth', ':auth-api', ':firebase-auth-api', ':feature-settings', ':glide'

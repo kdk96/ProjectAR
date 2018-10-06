@@ -2,7 +2,6 @@ package com.kdk96.auth.domain
 
 import com.kdk96.auth.data.repository.AuthRepository
 import io.reactivex.Completable
-import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -34,27 +33,28 @@ class AuthInteractorTest {
     @Test
     fun account_exists() {
         `when`(authRepository.checkEmail(CORRECT_TEST_EMAIL)).thenReturn(Completable.complete())
-        val testCompletable = authInteractor.checkEmail(CORRECT_TEST_EMAIL).test()
+        val testObserver = authInteractor.checkEmail(CORRECT_TEST_EMAIL).test()
         verify(authRepository).checkEmail(CORRECT_TEST_EMAIL)
-        testCompletable.assertComplete()
+        testObserver.assertNoErrors()
+                .assertComplete()
     }
 
     @Test
     fun account_not_exists() {
         `when`(authRepository.checkEmail(CORRECT_TEST_EMAIL))
                 .thenReturn(Completable.error(NoSuchAccountException()))
-        val testCompletable = authInteractor.checkEmail(CORRECT_TEST_EMAIL).test()
+        val testObserver = authInteractor.checkEmail(CORRECT_TEST_EMAIL).test()
         verify(authRepository).checkEmail(CORRECT_TEST_EMAIL)
-        testCompletable.assertError(NoSuchAccountException::class.java)
+        testObserver.assertError(NoSuchAccountException::class.java)
     }
 
     @Test
     fun check_invalid_email() {
         `when`(authRepository.checkEmail(INCORRECT_TEST_EMAIL))
                 .thenReturn(Completable.error(InvalidFieldException(setOf(FieldName.EMAIL))))
-        val testCompletable = authInteractor.checkEmail(INCORRECT_TEST_EMAIL).test()
+        val testObserver = authInteractor.checkEmail(INCORRECT_TEST_EMAIL).test()
         verify(authRepository).checkEmail(INCORRECT_TEST_EMAIL)
-        testCompletable.assertError(InvalidFieldException::class.java)
+        testObserver.assertError(InvalidFieldException::class.java)
                 .assertErrorMessage("fields: ${FieldName.EMAIL.name}")
     }
 
@@ -62,18 +62,19 @@ class AuthInteractorTest {
     fun sign_in_success() {
         `when`(authRepository.authorize(CORRECT_TEST_EMAIL, CORRECT_TEST_PASSWORD))
                 .thenReturn(Completable.complete())
-        val testCompletable = authInteractor.signIn(CORRECT_TEST_EMAIL, CORRECT_TEST_PASSWORD).test()
+        val testObserver = authInteractor.signIn(CORRECT_TEST_EMAIL, CORRECT_TEST_PASSWORD).test()
         verify(authRepository).authorize(CORRECT_TEST_EMAIL, CORRECT_TEST_PASSWORD)
-        testCompletable.assertComplete()
+        testObserver.assertNoErrors()
+                .assertComplete()
     }
 
     @Test
     fun sign_in_invalid_password_exception() {
         `when`(authRepository.authorize(CORRECT_TEST_EMAIL, INCORRECT_TEST_PASSWORD))
                 .thenReturn(Completable.error(InvalidFieldException(setOf(FieldName.PASSWORD))))
-        val testCompletable = authInteractor.signIn(CORRECT_TEST_EMAIL, INCORRECT_TEST_PASSWORD).test()
+        val testObserver = authInteractor.signIn(CORRECT_TEST_EMAIL, INCORRECT_TEST_PASSWORD).test()
         verify(authRepository).authorize(CORRECT_TEST_EMAIL, INCORRECT_TEST_PASSWORD)
-        testCompletable.assertError(InvalidFieldException::class.java)
+        testObserver.assertError(InvalidFieldException::class.java)
                 .assertErrorMessage("fields: ${FieldName.PASSWORD.name}")
     }
 
@@ -81,18 +82,19 @@ class AuthInteractorTest {
     fun sign_up_success() {
         `when`(authRepository.register(CORRECT_TEST_EMAIL, CORRECT_TEST_PASSWORD, CORRECT_TEST_NAME))
                 .thenReturn(Completable.complete())
-        val testCompletable = authInteractor.signUp(CORRECT_TEST_EMAIL, CORRECT_TEST_NAME, CORRECT_TEST_PASSWORD, CORRECT_TEST_PASSWORD_CONFIRMATION).test()
+        val testObserver = authInteractor.signUp(CORRECT_TEST_EMAIL, CORRECT_TEST_NAME, CORRECT_TEST_PASSWORD, CORRECT_TEST_PASSWORD_CONFIRMATION).test()
         verify(authRepository).register(CORRECT_TEST_EMAIL, CORRECT_TEST_PASSWORD, CORRECT_TEST_NAME)
-        testCompletable.assertComplete()
+        testObserver.assertNoErrors()
+                .assertComplete()
     }
 
     @Test
     fun sign_up_invalid_email_exception() {
         `when`(authRepository.register(INCORRECT_TEST_EMAIL, CORRECT_TEST_PASSWORD, CORRECT_TEST_NAME))
                 .thenReturn(Completable.error(InvalidFieldException(setOf(FieldName.EMAIL))))
-        val testCompletable = authInteractor.signUp(INCORRECT_TEST_EMAIL, CORRECT_TEST_NAME, CORRECT_TEST_PASSWORD, CORRECT_TEST_PASSWORD_CONFIRMATION).test()
+        val testObserver = authInteractor.signUp(INCORRECT_TEST_EMAIL, CORRECT_TEST_NAME, CORRECT_TEST_PASSWORD, CORRECT_TEST_PASSWORD_CONFIRMATION).test()
         verify(authRepository).register(INCORRECT_TEST_EMAIL, CORRECT_TEST_PASSWORD, CORRECT_TEST_NAME)
-        testCompletable.assertError(InvalidFieldException::class.java)
+        testObserver.assertError(InvalidFieldException::class.java)
                 .assertErrorMessage("fields: ${FieldName.EMAIL.name}")
     }
 
@@ -100,9 +102,9 @@ class AuthInteractorTest {
     fun sign_up_invalid_password_exception() {
         `when`(authRepository.register(CORRECT_TEST_EMAIL, INCORRECT_TEST_PASSWORD, CORRECT_TEST_NAME))
                 .thenReturn(Completable.error(InvalidFieldException(setOf(FieldName.PASSWORD))))
-        val testCompletable = authInteractor.signUp(CORRECT_TEST_EMAIL, CORRECT_TEST_NAME, INCORRECT_TEST_PASSWORD, CORRECT_TEST_PASSWORD_CONFIRMATION).test()
+        val testObserver = authInteractor.signUp(CORRECT_TEST_EMAIL, CORRECT_TEST_NAME, INCORRECT_TEST_PASSWORD, CORRECT_TEST_PASSWORD_CONFIRMATION).test()
         verify(authRepository).register(CORRECT_TEST_EMAIL, INCORRECT_TEST_PASSWORD, CORRECT_TEST_NAME)
-        testCompletable.assertError(InvalidFieldException::class.java)
+        testObserver.assertError(InvalidFieldException::class.java)
                 .assertErrorMessage("fields: ${FieldName.PASSWORD.name}")
     }
 
@@ -110,24 +112,8 @@ class AuthInteractorTest {
     fun sign_up_account_collision_exception() {
         `when`(authRepository.register(CORRECT_TEST_EMAIL, CORRECT_TEST_PASSWORD, CORRECT_TEST_NAME))
                 .thenReturn(Completable.error(AccountCollisionException()))
-        val testCompletable = authInteractor.signUp(CORRECT_TEST_EMAIL, CORRECT_TEST_NAME, CORRECT_TEST_PASSWORD, CORRECT_TEST_PASSWORD_CONFIRMATION).test()
+        val testObserver = authInteractor.signUp(CORRECT_TEST_EMAIL, CORRECT_TEST_NAME, CORRECT_TEST_PASSWORD, CORRECT_TEST_PASSWORD_CONFIRMATION).test()
         verify(authRepository).register(CORRECT_TEST_EMAIL, CORRECT_TEST_PASSWORD, CORRECT_TEST_NAME)
-        testCompletable.assertError(AccountCollisionException::class.java)
-    }
-
-    @Test
-    fun is_signed_in() {
-        `when`(authRepository.isSignedIn()).thenReturn(true)
-        val result = authInteractor.isSignedIn()
-        verify(authRepository).isSignedIn()
-        Assert.assertTrue(result)
-    }
-
-    @Test
-    fun is_not_signed_in() {
-        `when`(authRepository.isSignedIn()).thenReturn(false)
-        val result = authInteractor.isSignedIn()
-        verify(authRepository).isSignedIn()
-        Assert.assertFalse(result)
+        testObserver.assertError(AccountCollisionException::class.java)
     }
 }
