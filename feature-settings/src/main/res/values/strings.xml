@@ -1,0 +1,11 @@
+<resources>
+    <string name="settings">Settings</string>
+    <string name="edit">Edit</string>
+    <string name="sign_out">Sign out</string>
+    <string-array name="image_source_array">
+        <item>Take a photo</item>
+        <item>Pick an image from the gallery</item>
+    </string-array>
+    <string name="can_not_open_the_camera">Can\'t open the camera</string>
+    <string name="write_external_storage_permission_rationale_dialog_message">Access to storage is required to take a photo or pick an image from the gallery</string>
+</resources>

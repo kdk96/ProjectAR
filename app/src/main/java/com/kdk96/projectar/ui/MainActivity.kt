@@ -1,9 +1,12 @@
 package com.kdk96.projectar.ui
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
+import android.support.v7.app.ActionBarDrawerToggle
+import android.support.v7.widget.Toolbar
 import android.widget.Toast
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
@@ -14,19 +17,23 @@ import com.kdk96.common.di.findComponentDependencies
 import com.kdk96.common.presentation.Screens
 import com.kdk96.common.ui.BaseActivity
 import com.kdk96.common.ui.BaseFragment
+import com.kdk96.common.ui.HasDrawerToggle
+import com.kdk96.glide.GlideApp
 import com.kdk96.projectar.R
 import com.kdk96.projectar.di.main.DaggerMainComponent
 import com.kdk96.projectar.di.main.MainComponent
 import com.kdk96.projectar.presentation.MainPresenter
 import com.kdk96.projectar.presentation.MainView
+import com.kdk96.settings.ui.SettingsFragment
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.navigation_view_header.view.*
 import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.android.SupportFragmentNavigator
 import ru.terrakok.cicerone.commands.Command
 import javax.inject.Inject
 
-class MainActivity : BaseActivity(), MainView {
+class MainActivity : BaseActivity(), MainView, HasDrawerToggle {
     override val layoutRes = R.layout.activity_main
 
     private val currentFragment: BaseFragment?
@@ -43,6 +50,7 @@ class MainActivity : BaseActivity(), MainView {
     override lateinit var navigatorHolder: NavigatorHolder
     @Inject
     override lateinit var components: ChildComponents
+    private var drawerToggle: ActionBarDrawerToggle? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         getComponent<MainComponent>().inject(this)
@@ -68,6 +76,7 @@ class MainActivity : BaseActivity(), MainView {
         override fun createFragment(screenKey: String?, data: Any?): Fragment? = when (screenKey) {
             Screens.SIGN_IN_SCREEN -> SignInFragment()
             Screens.SIGN_UP_SCREEN -> SignUpFragment.newInstance(data as String)
+            Screens.SETTINGS_SCREEN -> SettingsFragment()
             else -> null
         }
 
@@ -82,14 +91,46 @@ class MainActivity : BaseActivity(), MainView {
 
     private fun updateNavigationDrawer() {
         val enable = when (currentFragment) {
+            is SettingsFragment -> true
             else -> false
         }
         enableNavigationDrawer(enable)
     }
 
     private fun enableNavigationDrawer(enable: Boolean) {
-        val lockMode = if (enable) DrawerLayout.LOCK_MODE_UNLOCKED else DrawerLayout.LOCK_MODE_LOCKED_CLOSED
+        val lockMode = if (enable) {
+            presenter.onDrawerUnlocked()
+            DrawerLayout.LOCK_MODE_UNLOCKED
+        } else DrawerLayout.LOCK_MODE_LOCKED_CLOSED
         drawerLayout.setDrawerLockMode(lockMode, GravityCompat.START)
+    }
+
+    override fun setupDrawerToggle(toolbar: Toolbar) {
+        drawerToggle = ActionBarDrawerToggle(this, drawerLayout, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        drawerLayout.addDrawerListener(drawerToggle!!)
+        drawerToggle!!.syncState()
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration?) {
+        super.onConfigurationChanged(newConfig)
+        drawerToggle?.onConfigurationChanged(newConfig)
+    }
+
+    override fun removeDrawerToggle() {
+        drawerLayout.removeDrawerListener(drawerToggle!!)
+        drawerToggle = null
+    }
+
+    override fun updateAccountInfo(name: String, email: String, avatarUrl: String?) {
+        val headerView = navigationView.getHeaderView(0)
+        headerView.nameTV.text = name
+        headerView.emailTV.text = email
+        GlideApp.with(this)
+                .load(avatarUrl)
+                .placeholder(R.drawable.avatar_placeholder)
+                .circleCrop()
+                .into(headerView.avatarIV)
     }
 
     override fun onBackPressed() {

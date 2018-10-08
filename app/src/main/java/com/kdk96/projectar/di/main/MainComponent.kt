@@ -1,20 +1,18 @@
 package com.kdk96.projectar.di.main
 
-import com.kdk96.auth.domain.AuthInteractor
+import com.kdk96.common.di.ActivityScope
 import com.kdk96.common.di.ChildComponents
 import com.kdk96.common.di.Component
+import com.kdk96.common.di.Rx
 import com.kdk96.projectar.presentation.MainPresenter
 import com.kdk96.projectar.ui.MainActivity
+import com.kdk96.settings.domain.AccountInteractor
 import dagger.Module
 import dagger.Provides
+import io.reactivex.Scheduler
 import ru.terrakok.cicerone.Router
-import javax.inject.Scope
 
-@Scope
-@Retention(AnnotationRetention.RUNTIME)
-annotation class MainActivityScope
-
-@MainActivityScope
+@ActivityScope
 @dagger.Component(
         dependencies = [MainDependencies::class],
         modules = [MainModule::class]
@@ -27,12 +25,13 @@ interface MainComponent : Component {
 object MainModule {
     @Provides
     @JvmStatic
-    @MainActivityScope
+    @ActivityScope
     fun provideChildComponents(): ChildComponents = mutableMapOf()
 
     @Provides
     @JvmStatic
-    @MainActivityScope
-    fun provideMainPresenter(router: Router, authInteractor: AuthInteractor) =
-            MainPresenter(router, authInteractor)
+    @ActivityScope
+    fun provideMainPresenter(router: Router, accountInteractor: AccountInteractor,
+                             @Rx.MainThread mainThreadScheduler: Scheduler) =
+            MainPresenter(router, accountInteractor, mainThreadScheduler)
 }

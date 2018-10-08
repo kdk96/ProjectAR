@@ -11,7 +11,7 @@
         android:id="@+id/avatarIV"
         android:layout_width="72dp"
         android:layout_height="72dp"
-        android:src="@drawable/account_placeholder" />
+        android:src="@drawable/avatar_placeholder" />
 
     <TextView
         android:id="@+id/nameTV"

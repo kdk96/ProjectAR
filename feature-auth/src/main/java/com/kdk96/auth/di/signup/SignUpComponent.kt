@@ -5,19 +5,15 @@ import com.kdk96.auth.domain.AuthInteractor
 import com.kdk96.auth.presentation.signup.SignUpPresenter
 import com.kdk96.auth.ui.SignUpFragment
 import com.kdk96.common.di.Component
+import com.kdk96.common.di.FragmentScope
 import com.kdk96.common.di.Rx
 import dagger.BindsInstance
 import dagger.Module
 import dagger.Provides
 import io.reactivex.Scheduler
 import ru.terrakok.cicerone.Router
-import javax.inject.Scope
 
-@Scope
-@Retention(AnnotationRetention.RUNTIME)
-annotation class SignUpScope
-
-@SignUpScope
+@FragmentScope
 @dagger.Component(
         modules = [SignUpModule::class],
         dependencies = [AuthDependencies::class]
@@ -27,7 +23,6 @@ interface SignUpComponent : Component {
     interface Builder {
         @BindsInstance
         fun email(email: String): Builder
-
         fun authDependencies(authDependencies: AuthDependencies): Builder
         fun build(): SignUpComponent
     }
@@ -39,7 +34,7 @@ interface SignUpComponent : Component {
 object SignUpModule {
     @Provides
     @JvmStatic
-    @SignUpScope
+    @FragmentScope
     fun provideSignUpPresenter(email: String, interactor: AuthInteractor, router: Router, @Rx.MainThread mainThreadScheduler: Scheduler) =
             SignUpPresenter(email, interactor, router, mainThreadScheduler)
 }

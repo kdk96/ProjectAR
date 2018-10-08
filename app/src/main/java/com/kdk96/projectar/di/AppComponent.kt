@@ -7,9 +7,12 @@ import com.kdk96.common.di.ComponentDependencies
 import com.kdk96.common.di.ComponentDependenciesKey
 import com.kdk96.common.di.Rx
 import com.kdk96.projectar.App
+import com.kdk96.projectar.di.account.AccountModule
 import com.kdk96.projectar.di.auth.AuthApiModule
 import com.kdk96.projectar.di.auth.AuthModule
+import com.kdk96.projectar.di.glide.GlideModule
 import com.kdk96.projectar.di.main.MainDependencies
+import com.kdk96.settings.di.SettingsDependencies
 import dagger.*
 import dagger.multibindings.IntoMap
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -25,9 +28,11 @@ import javax.inject.Singleton
     NavigationModule::class,
     ComponentDependenciesModule::class,
     AuthApiModule::class,
-    AuthModule::class
+    AuthModule::class,
+    GlideModule::class,
+    AccountModule::class
 ])
-interface AppComponent : MainDependencies, AuthDependencies {
+interface AppComponent : MainDependencies, AuthDependencies, SettingsDependencies {
     @Component.Builder
     interface Builder {
         @BindsInstance
@@ -91,4 +96,9 @@ interface ComponentDependenciesModule {
     @IntoMap
     @ComponentDependenciesKey(AuthDependencies::class)
     fun provideSignInDependencies(appComponent: AppComponent): ComponentDependencies
+
+    @Binds
+    @IntoMap
+    @ComponentDependenciesKey(SettingsDependencies::class)
+    fun provideSettingsDependencies(appComponent: AppComponent): ComponentDependencies
 }
