@@ -11,6 +11,8 @@ import android.widget.TextView
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.jakewharton.rxbinding2.widget.textChanges
+import com.kdk96.auth.di.auth.AuthComponent
+import com.kdk96.auth.di.auth.DaggerAuthComponent
 import com.kdk96.auth.di.signin.DaggerSignInComponent
 import com.kdk96.auth.di.signin.SignInComponent
 import com.kdk96.auth.presentation.signin.SignInPresenter
@@ -36,14 +38,20 @@ class SignInFragment : BaseFragment(), SignInView {
 
     private val animationHandler = Handler()
     private val fieldsChangesCompositeDisposable = CompositeDisposable()
+    private lateinit var authComponent: AuthComponent
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        authComponent = getComponent {
+            DaggerAuthComponent.builder()
+                    .authDependencies(findComponentDependencies())
+                    .build()
+        }
         getComponent<SignInComponent>().inject(this)
         super.onCreate(savedInstanceState)
     }
 
     override fun buildComponent() = DaggerSignInComponent.builder()
-            .authDependencies(findComponentDependencies())
+            .signInDependencies(authComponent)
             .build()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -82,7 +90,7 @@ class SignInFragment : BaseFragment(), SignInView {
 
     override fun onDestroy() {
         super.onDestroy()
-        clearComponentOnDestroy()
+        clearComponentsOnDestroy(AuthComponent::class.java, SignInComponent::class.java)
     }
 
     override fun showProgress(show: Boolean) = ConstraintSet().run {

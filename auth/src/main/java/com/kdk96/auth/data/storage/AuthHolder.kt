@@ -23,14 +23,14 @@ class AuthHolder(private val prefs: Prefs, private val authApi: AuthApi) {
         this.refreshFailureListener = refreshFailureListener
     }
 
-    fun refresh() {
-        authApi.refresh(prefs.getRefreshToken())
-                .doOnSuccess {
-                    prefs.saveTokenPair(it.accessToken, it.refreshToken)
-                    accessToken = it.accessToken
-                }.onErrorResumeNext(::onRefreshError)
-                .blockingGet()
-    }
+    fun refresh() = authApi.refresh(prefs.getRefreshToken())
+            .doOnSuccess {
+                prefs.saveTokenPair(it.accessToken, it.refreshToken)
+                accessToken = it.accessToken
+            }.onErrorResumeNext(::onRefreshError)
+            .ignoreElement()
+            .blockingAwait()
+
 
     private fun onRefreshError(throwable: Throwable): Single<TokenPair> {
         accessToken = null
