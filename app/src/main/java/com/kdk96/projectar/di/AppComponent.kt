@@ -1,7 +1,7 @@
 package com.kdk96.projectar.di
 
 import android.content.Context
-import com.kdk96.auth.di.AuthDependencies
+import com.kdk96.auth.di.auth.AuthDependencies
 import com.kdk96.common.di.ChildComponents
 import com.kdk96.common.di.ComponentDependencies
 import com.kdk96.common.di.ComponentDependenciesKey

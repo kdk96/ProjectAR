@@ -138,4 +138,9 @@ class MainActivity : BaseActivity(), MainView, HasDrawerToggle {
             drawerLayout.closeDrawer(GravityCompat.START)
         else currentFragment?.onBackPressed() ?: super.onBackPressed()
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (isFinishing) clearComponent<MainComponent>()
+    }
 }

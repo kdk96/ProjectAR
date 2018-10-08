@@ -34,12 +34,7 @@ abstract class BaseActivity : MvpAppCompatActivity(), HasComponent, ComponentMan
         super.onPause()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        if (isFinishing) clearComponent()
-    }
-
-    private fun clearComponent() {
-        (application as ComponentManager).components.remove(this.javaClass)
+    protected inline fun <reified T : Component> clearComponent() {
+        (application as ComponentManager).components.remove(T::class.java)
     }
 }

@@ -148,7 +148,7 @@ class SettingsFragment : BaseFragment(), SettingsView {
     override fun onDestroy() {
         super.onDestroy()
         permissionHelper.listener = null
-        clearComponentOnDestroy()
+        clearComponentsOnDestroy(SettingsComponent::class.java)
     }
 
     override fun onBackPressed() = presenter.onBackPressed()

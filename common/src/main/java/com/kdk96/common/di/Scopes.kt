@@ -13,8 +13,12 @@ class Rx private constructor() {
 
 @Scope
 @Retention(AnnotationRetention.RUNTIME)
-annotation class ActivityScope
+annotation class PerActivity
 
 @Scope
 @Retention(AnnotationRetention.RUNTIME)
-annotation class FragmentScope
+annotation class PerFragment
+
+@Scope
+@Retention(AnnotationRetention.RUNTIME)
+annotation class PerFeature

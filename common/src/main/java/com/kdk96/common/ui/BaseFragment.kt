@@ -16,8 +16,9 @@ abstract class BaseFragment : MvpAppCompatFragment(), HasComponent {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
             inflater.inflate(layoutRes, container, false)
 
-    protected inline fun <reified T : Component> getComponent() =
-            getComponent<T>(findComponentManager(), ::buildComponent)
+    protected inline fun <reified T : Component> getComponent(
+            componentBuilder: () -> Component = ::buildComponent
+    ) = getComponent<T>(findComponentManager(), componentBuilder)
 
     protected fun findComponentManager() = findForInjection<ComponentManager>()
 
@@ -36,8 +37,8 @@ abstract class BaseFragment : MvpAppCompatFragment(), HasComponent {
         }
     }
 
-    protected fun clearComponentOnDestroy() {
-        if (activity!!.isFinishing) clearComponent()
+    protected fun clearComponentsOnDestroy(vararg components: Class<out Component>) {
+        if (activity!!.isFinishing) clearComponents(components)
         if (isStateSaved) return
         var anyParentIsRemoving = false
         var parent = parentFragment
@@ -45,11 +46,12 @@ abstract class BaseFragment : MvpAppCompatFragment(), HasComponent {
             anyParentIsRemoving = parent.isRemoving
             parent = parent.parentFragment
         }
-        if (isRemoving || anyParentIsRemoving) clearComponent()
+        if (isRemoving || anyParentIsRemoving) clearComponents(components)
     }
 
-    private fun clearComponent() {
-        findComponentManager().components.remove(this.javaClass)
+    private fun clearComponents(componentsForRemove: Array<out Class<out Component>>) {
+        val components = findComponentManager().components
+        componentsForRemove.forEach { components.remove(it) }
     }
 
     abstract fun onBackPressed()

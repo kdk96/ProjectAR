@@ -7,6 +7,8 @@ import android.view.MenuItem
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.jakewharton.rxbinding2.widget.textChanges
+import com.kdk96.auth.di.auth.AuthComponent
+import com.kdk96.auth.di.auth.DaggerAuthComponent
 import com.kdk96.auth.di.signup.DaggerSignUpComponent
 import com.kdk96.auth.di.signup.SignUpComponent
 import com.kdk96.auth.presentation.signup.SignUpPresenter
@@ -38,15 +40,21 @@ class SignUpFragment : BaseFragment(), SignUpView {
     fun providePresenter() = presenter
 
     private val fieldsChangesCompositeDisposable = CompositeDisposable()
+    private lateinit var authComponent: AuthComponent
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        authComponent = getComponent {
+            DaggerAuthComponent.builder()
+                    .authDependencies(findComponentDependencies())
+                    .build()
+        }
         getComponent<SignUpComponent>().inject(this)
         super.onCreate(savedInstanceState)
     }
 
     override fun buildComponent() = DaggerSignUpComponent.builder()
             .email(arguments!!.getString(ARG_EMAIL)!!)
-            .authDependencies(findComponentDependencies())
+            .signUpDependencies(authComponent)
             .build()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -82,7 +90,7 @@ class SignUpFragment : BaseFragment(), SignUpView {
 
     override fun onDestroy() {
         super.onDestroy()
-        clearComponentOnDestroy()
+        clearComponentsOnDestroy(SignUpComponent::class.java)
     }
 
     override fun setEmail(email: String) = emailET.setText(email)

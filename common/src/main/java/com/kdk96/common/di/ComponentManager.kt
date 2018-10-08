@@ -4,12 +4,13 @@ interface Component
 
 interface HasComponent
 
-typealias ChildComponents = MutableMap<Class<out HasComponent>, Component>
+typealias ChildComponents = MutableMap<Class<out Component>, Component>
 
 interface ComponentManager {
     val components: ChildComponents
 }
 
 inline fun <reified T : Component> HasComponent.getComponent(
-        componentManager: ComponentManager, componentBuilder: () -> Component
-) = componentManager.components.getOrPut(this.javaClass, componentBuilder) as T
+        componentManager: ComponentManager,
+        componentBuilder: () -> Component
+) = componentManager.components.getOrPut(T::class.java, componentBuilder) as T
