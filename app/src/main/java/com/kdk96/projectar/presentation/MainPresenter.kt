@@ -4,6 +4,8 @@ import com.arellomobile.mvp.InjectViewState
 import com.kdk96.common.di.Rx
 import com.kdk96.common.presentation.BasePresenter
 import com.kdk96.common.presentation.Screens
+import com.kdk96.projectar.presentation.MainView.MenuItem
+import com.kdk96.projectar.presentation.MainView.MenuItem.*
 import com.kdk96.settings.domain.AccountInteractor
 import io.reactivex.Scheduler
 import ru.terrakok.cicerone.Router
@@ -15,6 +17,8 @@ class MainPresenter @Inject constructor(
         private val accountInteractor: AccountInteractor,
         @Rx.MainThread private val mainThreadScheduler: Scheduler
 ) : BasePresenter<MainView>() {
+    private var selectedItem = MenuItem.QUESTS
+
     override fun onFirstViewAttach() {
         if (accountInteractor.isSignedIn()) {
             router.newRootScreen(Screens.SETTINGS_SCREEN)
@@ -28,4 +32,15 @@ class MainPresenter @Inject constructor(
             .observeOn(mainThreadScheduler)
             .subscribe({}, Throwable::printStackTrace)
             .connect()
+
+    fun onMenuItemSelected(item: MenuItem) {
+        if (item != selectedItem) {
+            when (item) {
+                QUESTS -> router.newRootScreen(Screens.QUESTS_SCREEN)
+                PRIZES -> router.newRootScreen("")
+                SETTINGS -> router.newRootScreen(Screens.SETTINGS_SCREEN)
+            }
+            selectedItem = item
+        }
+    }
 }
