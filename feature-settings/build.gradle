@@ -42,4 +42,5 @@ dependencies {
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofit_version"
     testImplementation "junit:junit:$junit_version"
     testImplementation "org.mockito:mockito-inline:$mockito_version"
+    implementation project(':network')
 }

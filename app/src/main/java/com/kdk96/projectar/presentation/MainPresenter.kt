@@ -21,7 +21,7 @@ class MainPresenter @Inject constructor(
 
     override fun onFirstViewAttach() {
         if (accountInteractor.isSignedIn()) {
-            router.newRootScreen(Screens.SETTINGS_SCREEN)
+            router.newRootScreen(Screens.QUESTS_SCREEN)
         } else router.newRootScreen(Screens.SIGN_IN_SCREEN)
         accountInteractor.accountDataChanges
                 .observeOn(mainThreadScheduler)

@@ -5,10 +5,10 @@ import com.kdk96.auth.data.storage.AuthHolder
 import com.kdk96.auth.data.storage.Prefs
 import com.kdk96.common.di.Rx
 import com.kdk96.glide.GlideCacheCleaner
+import com.kdk96.network.data.network.ApiAuthenticator
+import com.kdk96.network.data.network.AuthHeaderInterceptor
+import com.kdk96.network.data.network.ServerApi
 import com.kdk96.settings.data.storage.AvatarFileProcessor
-import com.kdk96.settings.data.network.ApiAuthenticator
-import com.kdk96.settings.data.network.AuthHeaderInterceptor
-import com.kdk96.settings.data.network.ServerApi
 import com.kdk96.settings.data.repository.AccountRepository
 import com.kdk96.settings.domain.AccountInteractor
 import dagger.Module
@@ -67,5 +67,4 @@ object AccountModule {
             router: Router,
             @Rx.MainThread mainThreadScheduler: Scheduler
     ) = AccountInteractor(accountRepository, router, mainThreadScheduler)
-
 }

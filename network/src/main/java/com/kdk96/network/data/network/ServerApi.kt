@@ -1,6 +1,7 @@
-package com.kdk96.settings.data.network
+package com.kdk96.network.data.network
 
-import com.kdk96.settings.domain.AccountData
+import com.kdk96.network.data.entity.QuestResponse
+import com.kdk96.network.domain.AccountData
 import io.reactivex.Completable
 import io.reactivex.Single
 import okhttp3.MultipartBody
@@ -19,4 +20,7 @@ interface ServerApi {
 
     @POST("account/signout")
     fun signOut(): Completable
+
+    @GET("quests")
+    fun getQuests(): Single<List<QuestResponse>>
 }

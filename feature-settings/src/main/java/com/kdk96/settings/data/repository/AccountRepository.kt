@@ -4,10 +4,12 @@ import com.kdk96.auth.data.storage.AuthHolder
 import com.kdk96.auth.data.storage.Prefs
 import com.kdk96.common.di.Rx
 import com.kdk96.glide.GlideCacheCleaner
+import com.kdk96.network.data.network.ServerApi
+import com.kdk96.network.domain.AccountData
 import com.kdk96.settings.data.storage.AvatarFileProcessor
-import com.kdk96.settings.data.network.ServerApi
-import com.kdk96.settings.domain.AccountData
-import io.reactivex.*
+import io.reactivex.Completable
+import io.reactivex.Scheduler
+import io.reactivex.Single
 import io.reactivex.subjects.BehaviorSubject
 import okhttp3.MediaType
 import okhttp3.MultipartBody

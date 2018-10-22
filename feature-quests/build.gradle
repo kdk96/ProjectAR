@@ -13,6 +13,12 @@ android {
     }
 }
 
+kapt {
+    arguments {
+        arg("moxyReflectorPackage", "com.kdk96.quests.screen")
+    }
+}
+
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "com.android.support:appcompat-v7:$support_version"
@@ -21,4 +27,16 @@ dependencies {
     implementation "com.android.support:design:$support_version"
     implementation "com.arello-mobile:moxy:$moxy_version"
     implementation "com.arello-mobile:moxy-app-compat:$moxy_version"
+    kapt "com.arello-mobile:moxy-compiler:$moxy_version"
+    implementation "com.google.dagger:dagger:$dagger_version"
+    kapt "com.google.dagger:dagger-compiler:$dagger_version"
+    implementation "ru.terrakok.cicerone:cicerone:$cicerone_version"
+    implementation "com.android.support.constraint:constraint-layout:$constaintlayout_version"
+    implementation "com.jakewharton.threetenabp:threetenabp:$threetenabp_version"
+    implementation "io.reactivex.rxjava2:rxjava:$rxjava_version"
+    implementation project(':network')
+    implementation "com.github.bumptech.glide:glide:$glide_version"
+    implementation project(':glide')
+    testImplementation "junit:junit:$junit_version"
+    testImplementation "org.mockito:mockito-inline:$mockito_version"
 }

@@ -1,4 +1,4 @@
-package com.kdk96.settings.data.network
+package com.kdk96.network.data.network
 
 import com.kdk96.auth.data.storage.AuthHolder
 import okhttp3.Authenticator

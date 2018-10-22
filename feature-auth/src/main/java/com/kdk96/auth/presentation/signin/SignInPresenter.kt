@@ -44,7 +44,7 @@ class SignInPresenter @Inject constructor(
     fun onSignInClick(email: String, password: String) = interactor.signIn(email, password)
             .observeOn(mainThreadScheduler)
             .doOnSubscribe { viewState.showProgress(true) }
-            .subscribe({ router.newRootScreen(Screens.SETTINGS_SCREEN) },
+            .subscribe({ router.newRootScreen(Screens.QUESTS_SCREEN) },
                     {
                         viewState.showProgress(false)
                         onError(it)
