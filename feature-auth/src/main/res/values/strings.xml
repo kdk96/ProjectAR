@@ -11,7 +11,6 @@
     <string name="empty_name_error">Enter name</string>
     <string name="empty_password_error">Enter password</string>
     <string name="empty_password_confirmation_error">Enter password confirmation</string>
-    <string name="network_error">Network error</string>
     <string name="invalid_email_error">Invalid email</string>
     <string name="invalid_password_error">Invalid password</string>
     <string name="invalid_new_password_error">Your password must be at least 8 characters (only latin letters and numbers), and include at least one lowercase letter, one uppercase letter and a number</string>

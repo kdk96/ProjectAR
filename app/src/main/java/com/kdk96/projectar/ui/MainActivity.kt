@@ -24,6 +24,8 @@ import com.kdk96.projectar.di.main.DaggerMainComponent
 import com.kdk96.projectar.di.main.MainComponent
 import com.kdk96.projectar.presentation.MainPresenter
 import com.kdk96.projectar.presentation.MainView
+import com.kdk96.projectar.presentation.MainView.MenuItem
+import com.kdk96.quests.ui.QuestsFragment
 import com.kdk96.settings.ui.SettingsFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.navigation_view_header.view.*
@@ -56,7 +58,13 @@ class MainActivity : BaseActivity(), MainView, HasDrawerToggle {
         getComponent<MainComponent>().inject(this)
         setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
-        navigationView.setNavigationItemSelectedListener {
+        navigationView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.quests -> MenuItem.QUESTS
+                R.id.prizes -> MenuItem.PRIZES
+                R.id.settings -> MenuItem.SETTINGS
+                else -> null
+            }?.let { presenter.onMenuItemSelected(it) }
             drawerLayout.closeDrawer(GravityCompat.START)
             true
         }
@@ -76,6 +84,10 @@ class MainActivity : BaseActivity(), MainView, HasDrawerToggle {
         override fun createFragment(screenKey: String?, data: Any?): Fragment? = when (screenKey) {
             Screens.SIGN_IN_SCREEN -> SignInFragment()
             Screens.SIGN_UP_SCREEN -> SignUpFragment.newInstance(data as String)
+            Screens.QUESTS_SCREEN -> {
+                navigationView.setCheckedItem(R.id.quests)
+                QuestsFragment()
+            }
             Screens.SETTINGS_SCREEN -> SettingsFragment()
             else -> null
         }
@@ -91,7 +103,7 @@ class MainActivity : BaseActivity(), MainView, HasDrawerToggle {
 
     private fun updateNavigationDrawer() {
         val enable = when (currentFragment) {
-            is SettingsFragment -> true
+            is QuestsFragment, is SettingsFragment -> true
             else -> false
         }
         enableNavigationDrawer(enable)
