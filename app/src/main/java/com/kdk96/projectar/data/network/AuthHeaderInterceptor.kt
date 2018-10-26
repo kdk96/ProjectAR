@@ -1,4 +1,4 @@
-package com.kdk96.network.data.network
+package com.kdk96.projectar.data.network
 
 import com.kdk96.auth.data.storage.AuthHolder
 import okhttp3.Interceptor

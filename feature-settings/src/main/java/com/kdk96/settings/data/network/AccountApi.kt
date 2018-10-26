@@ -1,7 +1,6 @@
-package com.kdk96.network.data.network
+package com.kdk96.settings.data.network
 
-import com.kdk96.network.data.entity.QuestResponse
-import com.kdk96.network.domain.AccountData
+import com.kdk96.settings.domain.AccountData
 import io.reactivex.Completable
 import io.reactivex.Single
 import okhttp3.MultipartBody
@@ -10,7 +9,7 @@ import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
 
-interface ServerApi {
+interface AccountApi {
     @GET("account/info")
     fun getAccountInfo(): Single<AccountData>
 
@@ -20,7 +19,4 @@ interface ServerApi {
 
     @POST("account/signout")
     fun signOut(): Completable
-
-    @GET("quests")
-    fun getQuests(): Single<List<QuestResponse>>
 }

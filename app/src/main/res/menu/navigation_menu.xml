@@ -5,7 +5,6 @@
         android:checkableBehavior="single">
         <item
             android:id="@+id/quests"
-            android:checked="true"
             android:icon="@drawable/ic_quests"
             android:title="@string/quests" />
         <item

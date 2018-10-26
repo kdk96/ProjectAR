@@ -1,7 +1,6 @@
 package com.kdk96.settings.domain
 
 import com.kdk96.common.presentation.Screens
-import com.kdk96.network.domain.AccountData
 import com.kdk96.settings.data.repository.AccountRepository
 import io.reactivex.Observable
 import io.reactivex.Scheduler

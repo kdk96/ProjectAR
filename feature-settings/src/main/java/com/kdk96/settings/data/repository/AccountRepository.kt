@@ -4,9 +4,9 @@ import com.kdk96.auth.data.storage.AuthHolder
 import com.kdk96.auth.data.storage.Prefs
 import com.kdk96.common.di.Rx
 import com.kdk96.glide.GlideCacheCleaner
-import com.kdk96.network.data.network.ServerApi
-import com.kdk96.network.domain.AccountData
+import com.kdk96.settings.data.network.AccountApi
 import com.kdk96.settings.data.storage.AvatarFileProcessor
+import com.kdk96.settings.domain.AccountData
 import io.reactivex.Completable
 import io.reactivex.Scheduler
 import io.reactivex.Single
@@ -17,20 +17,24 @@ import okhttp3.RequestBody
 import java.io.File
 
 class AccountRepository(
-        private val api: ServerApi,
+        private val api: AccountApi,
         private val prefs: Prefs,
         @Rx.Io private val ioScheduler: Scheduler,
         private val authHolder: AuthHolder,
         private val avatarFileProcessor: AvatarFileProcessor,
-        private val glideCacheCleaner: GlideCacheCleaner
+        private val glideCacheCleaner: GlideCacheCleaner,
+        private val databaseCleaner: DatabaseCleaner
 ) {
+    interface DatabaseCleaner {
+        fun clean()
+    }
+
     val accountDataChanges = BehaviorSubject.create<AccountData>()
 
     fun isSingedIn() = !authHolder.accessToken.isNullOrEmpty()
 
-    fun subscribeToRefreshFailure(listener: () -> Unit) {
-        authHolder.registerRefreshFailureListener(listener)
-    }
+    fun subscribeToRefreshFailure(listener: () -> Unit) =
+            authHolder.registerRefreshFailureListener(listener)
 
     fun getAccountData() = Single.concat(
             Single.just(AccountData(prefs.getEmail(), prefs.getName(), prefs.getPhotoUrl())),
@@ -63,6 +67,7 @@ class AccountRepository(
             .andThen(Completable.fromAction {
                 authHolder.accessToken = null
                 prefs.removeAccountData()
+                databaseCleaner.clean()
                 accountDataChanges.onNext(
                         AccountData("johndoe@gmail.com", "John Doe", null)
                 )

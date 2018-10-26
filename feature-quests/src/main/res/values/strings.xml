@@ -1,3 +1,4 @@
 <resources>
     <string name="quests">Quests</string>
+    <string name="retry">Retry</string>
 </resources>

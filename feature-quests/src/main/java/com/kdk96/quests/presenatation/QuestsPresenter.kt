@@ -2,9 +2,11 @@ package com.kdk96.quests.presenatation
 
 import com.arellomobile.mvp.InjectViewState
 import com.kdk96.common.presentation.BasePresenter
+import com.kdk96.quests.R
 import com.kdk96.quests.domain.QuestsInteractor
 import io.reactivex.Scheduler
 import ru.terrakok.cicerone.Router
+import java.io.IOException
 
 @InjectViewState
 class QuestsPresenter(
@@ -17,16 +19,22 @@ class QuestsPresenter(
         getQuests()
     }
 
-    fun onRefresh() {
-        getQuests()
-    }
+    fun onRefresh() = getQuests()
 
     private fun getQuests() = interactor.getQuests()
-            .observeOn(mainThreadScheduler)
+            .observeOn(mainThreadScheduler, true)
             .doAfterTerminate { viewState.showRefreshProgress(false) }
             .subscribe({
                 viewState.showQuests(it)
-            }, Throwable::printStackTrace)
+            }, {
+                when (it) {
+                    is IOException -> viewState.showError(R.string.network_error)
+                    else -> {
+                        viewState.showError(R.string.unknown_error)
+                        it.printStackTrace()
+                    }
+                }
+            })
             .connect()
 
     fun onBackPressed() = router.exit()

@@ -1,11 +1,10 @@
-package com.kdk96.network.data.entity
+package com.kdk96.quests.data.network.entity
 
 import com.google.gson.annotations.SerializedName
 
 data class QuestResponse(
         val id: String,
         val title: String,
-        val price: Short,
         @SerializedName("start_time")
         val startTime: Long,
         @SerializedName("company_id")

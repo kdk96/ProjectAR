@@ -8,14 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import com.kdk96.glide.GlideApp
 import com.kdk96.quests.R
-import com.kdk96.quests.domain.Quest
+import com.kdk96.quests.domain.entity.QuestShortInfo
 import kotlinx.android.synthetic.main.item_quest.view.*
 import org.threeten.bp.Instant
 import org.threeten.bp.ZoneId
 import org.threeten.bp.format.DateTimeFormatter
 import java.util.*
 
-class QuestsAdapter : ListAdapter<Quest, QuestsAdapter.ViewHolder>(DiffItemCallback()) {
+class QuestsAdapter : ListAdapter<QuestShortInfo, QuestsAdapter.ViewHolder>(DiffItemCallback()) {
     private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm, d MMM")
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -26,7 +26,7 @@ class QuestsAdapter : ListAdapter<Quest, QuestsAdapter.ViewHolder>(DiffItemCallb
     override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(getItem(position))
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(quest: Quest) {
+        fun bind(quest: QuestShortInfo) {
             itemView.titleTV.text = quest.title
             itemView.companyNameTV.text = quest.companyName
             itemView.grandPrizeTV.text = quest.grandPrizeDescription
@@ -40,11 +40,11 @@ class QuestsAdapter : ListAdapter<Quest, QuestsAdapter.ViewHolder>(DiffItemCallb
         }
     }
 
-    private class DiffItemCallback : DiffUtil.ItemCallback<Quest>() {
-        override fun areItemsTheSame(oldItem: Quest, newItem: Quest): Boolean =
+    private class DiffItemCallback : DiffUtil.ItemCallback<QuestShortInfo>() {
+        override fun areItemsTheSame(oldItem: QuestShortInfo, newItem: QuestShortInfo): Boolean =
                 oldItem.id == newItem.id
 
-        override fun areContentsTheSame(oldItem: Quest, newItem: Quest): Boolean =
+        override fun areContentsTheSame(oldItem: QuestShortInfo, newItem: QuestShortInfo): Boolean =
                 oldItem == newItem
     }
 }

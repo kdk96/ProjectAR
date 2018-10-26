@@ -84,7 +84,10 @@ class MainActivity : BaseActivity(), MainView, HasDrawerToggle {
         override fun createFragment(screenKey: String?, data: Any?): Fragment? = when (screenKey) {
             Screens.SIGN_IN_SCREEN -> SignInFragment()
             Screens.SIGN_UP_SCREEN -> SignUpFragment.newInstance(data as String)
-            Screens.QUESTS_SCREEN -> QuestsFragment()
+            Screens.QUESTS_SCREEN -> {
+                navigationView.setCheckedItem(R.id.quests)
+                QuestsFragment()
+            }
             Screens.SETTINGS_SCREEN -> SettingsFragment()
             else -> null
         }

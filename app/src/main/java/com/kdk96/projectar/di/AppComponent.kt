@@ -10,8 +10,10 @@ import com.kdk96.projectar.App
 import com.kdk96.projectar.di.account.AccountModule
 import com.kdk96.projectar.di.auth.AuthApiModule
 import com.kdk96.projectar.di.auth.AuthModule
+import com.kdk96.projectar.di.database.DatabaseModule
 import com.kdk96.projectar.di.glide.GlideModule
 import com.kdk96.projectar.di.main.MainDependencies
+import com.kdk96.projectar.di.network.ServerApiModule
 import com.kdk96.quests.di.QuestsDependencies
 import com.kdk96.settings.di.SettingsDependencies
 import dagger.*
@@ -31,7 +33,9 @@ import javax.inject.Singleton
     AuthApiModule::class,
     AuthModule::class,
     GlideModule::class,
-    AccountModule::class
+    AccountModule::class,
+    DatabaseModule::class,
+    ServerApiModule::class
 ])
 interface AppComponent : MainDependencies, AuthDependencies, SettingsDependencies, QuestsDependencies {
     @Component.Builder

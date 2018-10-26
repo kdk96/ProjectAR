@@ -1,6 +1,5 @@
 package com.kdk96.settings.domain
 
-import com.kdk96.network.domain.AccountData
 import com.kdk96.settings.data.repository.AccountRepository
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers

@@ -1,6 +1,6 @@
-package com.kdk96.quests.domain
+package com.kdk96.quests.domain.entity
 
-data class Quest(
+data class QuestShortInfo(
         val id: String,
         val title: String,
         val startTime: Long,

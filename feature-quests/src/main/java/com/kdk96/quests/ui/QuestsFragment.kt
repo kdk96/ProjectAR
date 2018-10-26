@@ -2,6 +2,7 @@ package com.kdk96.quests.ui
 
 import android.os.Bundle
 import android.os.Handler
+import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
@@ -13,7 +14,7 @@ import com.kdk96.common.ui.HasDrawerToggle
 import com.kdk96.quests.R
 import com.kdk96.quests.di.DaggerQuestsComponent
 import com.kdk96.quests.di.QuestsComponent
-import com.kdk96.quests.domain.Quest
+import com.kdk96.quests.domain.entity.QuestShortInfo
 import com.kdk96.quests.presenatation.QuestsPresenter
 import com.kdk96.quests.presenatation.QuestsView
 import kotlinx.android.synthetic.main.fragment_quests.*
@@ -26,6 +27,7 @@ class QuestsFragment : BaseFragment(), QuestsView {
     @Inject
     @InjectPresenter
     lateinit var presenter: QuestsPresenter
+    private var snackbar: Snackbar? = null
 
     @ProvidePresenter
     fun providePresenter() = presenter
@@ -58,11 +60,19 @@ class QuestsFragment : BaseFragment(), QuestsView {
         viewHandler.post { swipeRefreshLayout.isRefreshing = show }
     }
 
-    override fun showQuests(quests: List<Quest>) {
+    override fun showQuests(quests: List<QuestShortInfo>) {
         viewHandler.post { adapter.submitList(quests) }
     }
 
+    override fun showError(resId: Int) {
+        snackbar = Snackbar.make(view!!, resId, Snackbar.LENGTH_INDEFINITE)
+                .setAction(R.string.retry) { presenter.onRefresh() }
+        snackbar?.show()
+    }
+
     override fun onDestroyView() {
+        snackbar?.dismiss()
+        snackbar = null
         (activity as HasDrawerToggle).removeDrawerToggle()
         super.onDestroyView()
     }
