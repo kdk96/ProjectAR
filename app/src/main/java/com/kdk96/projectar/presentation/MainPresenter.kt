@@ -37,7 +37,7 @@ class MainPresenter @Inject constructor(
         if (item != selectedItem) {
             when (item) {
                 QUESTS -> router.newRootScreen(Screens.QUESTS_SCREEN)
-                PRIZES -> router.newRootScreen("")
+                PRIZES -> router.newRootScreen(Screens.PRIZES_SCREEN)
                 SETTINGS -> router.newRootScreen(Screens.SETTINGS_SCREEN)
             }
             selectedItem = item

@@ -8,4 +8,5 @@ include ':common',
         ':glide',
         ':feature-quests',
         ':database',
-        ':quests-api'
+        ':quests-api',
+        ':feature-prizes'

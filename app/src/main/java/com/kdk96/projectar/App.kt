@@ -14,7 +14,8 @@ import javax.inject.Inject
 @RegisterMoxyReflectorPackages(
         "com.kdk96.auth.screen",
         "com.kdk96.settings.screen",
-        "com.kdk96.quests.screen"
+        "com.kdk96.quests.screen",
+        "com.kdk96.prizes.screen"
 )
 class App : Application(), ComponentManager, HasComponentDependencies {
     private lateinit var appComponent: AppComponent

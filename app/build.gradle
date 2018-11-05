@@ -40,4 +40,5 @@ dependencies {
     implementation "com.jakewharton.threetenabp:threetenabp:$threetenabp_version"
     implementation "android.arch.persistence.room:runtime:$room_version"
     implementation project(':database')
+    implementation project(':feature-prizes')
 }

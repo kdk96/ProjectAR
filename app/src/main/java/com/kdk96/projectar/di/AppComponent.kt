@@ -6,6 +6,7 @@ import com.kdk96.common.di.ChildComponents
 import com.kdk96.common.di.ComponentDependencies
 import com.kdk96.common.di.ComponentDependenciesKey
 import com.kdk96.common.di.Rx
+import com.kdk96.prizes.di.PrizesDependencies
 import com.kdk96.projectar.App
 import com.kdk96.projectar.di.account.AccountModule
 import com.kdk96.projectar.di.auth.AuthApiModule
@@ -37,7 +38,7 @@ import javax.inject.Singleton
     DatabaseModule::class,
     ServerApiModule::class
 ])
-interface AppComponent : MainDependencies, AuthDependencies, SettingsDependencies, QuestsDependencies {
+interface AppComponent : MainDependencies, AuthDependencies, SettingsDependencies, QuestsDependencies, PrizesDependencies {
     @Component.Builder
     interface Builder {
         @BindsInstance
@@ -111,4 +112,9 @@ interface ComponentDependenciesModule {
     @IntoMap
     @ComponentDependenciesKey(QuestsDependencies::class)
     fun provideQuestsDependencies(appComponent: AppComponent): ComponentDependencies
+
+    @Binds
+    @IntoMap
+    @ComponentDependenciesKey(PrizesDependencies::class)
+    fun providePrizesDependencies(appComponent: AppComponent): ComponentDependencies
 }

@@ -19,6 +19,7 @@ import com.kdk96.common.ui.BaseActivity
 import com.kdk96.common.ui.BaseFragment
 import com.kdk96.common.ui.HasDrawerToggle
 import com.kdk96.glide.GlideApp
+import com.kdk96.prizes.ui.PrizesFragment
 import com.kdk96.projectar.R
 import com.kdk96.projectar.di.main.DaggerMainComponent
 import com.kdk96.projectar.di.main.MainComponent
@@ -88,6 +89,7 @@ class MainActivity : BaseActivity(), MainView, HasDrawerToggle {
                 navigationView.setCheckedItem(R.id.quests)
                 QuestsFragment()
             }
+            Screens.PRIZES_SCREEN -> PrizesFragment()
             Screens.SETTINGS_SCREEN -> SettingsFragment()
             else -> null
         }
@@ -103,7 +105,7 @@ class MainActivity : BaseActivity(), MainView, HasDrawerToggle {
 
     private fun updateNavigationDrawer() {
         val enable = when (currentFragment) {
-            is QuestsFragment, is SettingsFragment -> true
+            is QuestsFragment, is SettingsFragment, is PrizesFragment -> true
             else -> false
         }
         enableNavigationDrawer(enable)
