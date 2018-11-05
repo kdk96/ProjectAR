@@ -32,10 +32,9 @@ class QuestsInteractorTest {
 
     @Test
     fun get_quests_failure() {
-        val exception = IOException()
-        `when`(questsRepository.getQuests()).thenReturn(Flowable.error(exception))
+        `when`(questsRepository.getQuests()).thenReturn(Flowable.error(IOException()))
         val testObserver = questsInteractor.getQuests().test()
         testObserver.assertNoValues()
-                .assertError(exception)
+                .assertError(IOException::class.java)
     }
 }

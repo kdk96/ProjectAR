@@ -73,11 +73,10 @@ class AccountInteractorTest {
 
     @Test
     fun get_account_data_failure() {
-        val exception = IOException()
-        `when`(accountRepository.getAccountData()).thenReturn(Completable.error(exception))
+        `when`(accountRepository.getAccountData()).thenReturn(Completable.error(IOException()))
         val testObserver = accountInteractor.getAccountData().test()
         testObserver.assertNoValues()
-                .assertError(exception)
+                .assertError(IOException::class.java)
     }
 
     @Test
@@ -90,11 +89,10 @@ class AccountInteractorTest {
 
     @Test
     fun update_avatar_failure() {
-        val exception = IOException()
-        `when`(accountRepository.updateAvatar(TEST_PATH)).thenReturn(Completable.error(exception))
+        `when`(accountRepository.updateAvatar(TEST_PATH)).thenReturn(Completable.error(IOException()))
         val testObserver = accountInteractor.updateAvatar(TEST_PATH).test()
         testObserver.assertNoValues()
-                .assertError(exception)
+                .assertError(IOException::class.java)
     }
 
     @Test
