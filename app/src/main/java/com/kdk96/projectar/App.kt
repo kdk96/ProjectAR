@@ -15,7 +15,8 @@ import javax.inject.Inject
         "com.kdk96.auth.screen",
         "com.kdk96.settings.screen",
         "com.kdk96.quests.screen",
-        "com.kdk96.prizes.screen"
+        "com.kdk96.prizes.screen",
+        "com.kdk96.questinfo.screen"
 )
 class App : Application(), ComponentManager, HasComponentDependencies {
     private lateinit var appComponent: AppComponent

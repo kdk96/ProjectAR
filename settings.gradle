@@ -9,4 +9,5 @@ include ':common',
         ':feature-quests',
         ':database',
         ':quests-api',
-        ':feature-prizes'
+        ':feature-prizes',
+        ':feature-questinfo'

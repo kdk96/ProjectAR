@@ -15,7 +15,9 @@ import org.threeten.bp.ZoneId
 import org.threeten.bp.format.DateTimeFormatter
 import java.util.*
 
-class QuestsAdapter : ListAdapter<QuestShortInfo, QuestsAdapter.ViewHolder>(DiffItemCallback()) {
+class QuestsAdapter(
+        private val clickListener: (id: String) -> Unit
+) : ListAdapter<QuestShortInfo, QuestsAdapter.ViewHolder>(DiffItemCallback()) {
     private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm, d MMM")
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -26,17 +28,25 @@ class QuestsAdapter : ListAdapter<QuestShortInfo, QuestsAdapter.ViewHolder>(Diff
     override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(getItem(position))
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private lateinit var quest: QuestShortInfo
+
+        init {
+            itemView.setOnClickListener { clickListener(quest.id) }
+        }
+
         fun bind(quest: QuestShortInfo) {
-            itemView.titleTV.text = quest.title
-            itemView.companyNameTV.text = quest.companyName
-            itemView.grandPrizeTV.text = quest.grandPrizeDescription
-            Date(quest.startTime)
-            val startTime = Instant.ofEpochMilli(quest.startTime)
-                    .atZone(ZoneId.of("UTC"))
-                    .withZoneSameInstant(ZoneId.systemDefault())
-            itemView.startTimeTV.text = startTime.format(timeFormatter)
-            GlideApp.with(itemView).load(quest.companyLogoUrl)
-                    .into(itemView.companyLogoIV)
+            this.quest = quest
+            with(itemView) {
+                titleTV.text = quest.title
+                companyNameTV.text = quest.companyName
+                grandPrizeTV.text = quest.grandPrizeDescription
+                val startTime = Instant.ofEpochMilli(quest.startTime)
+                        .atZone(ZoneId.of("UTC"))
+                        .withZoneSameInstant(ZoneId.systemDefault())
+                startTimeTV.text = startTime.format(timeFormatter)
+                GlideApp.with(this).load(quest.companyLogoUrl)
+                        .into(companyLogoIV)
+            }
         }
     }
 

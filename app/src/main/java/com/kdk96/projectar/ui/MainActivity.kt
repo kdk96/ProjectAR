@@ -26,6 +26,7 @@ import com.kdk96.projectar.di.main.MainComponent
 import com.kdk96.projectar.presentation.MainPresenter
 import com.kdk96.projectar.presentation.MainView
 import com.kdk96.projectar.presentation.MainView.MenuItem
+import com.kdk96.questinfo.ui.QuestInfoFragment
 import com.kdk96.quests.ui.QuestsFragment
 import com.kdk96.settings.ui.SettingsFragment
 import kotlinx.android.synthetic.main.activity_main.*
@@ -91,6 +92,7 @@ class MainActivity : BaseActivity(), MainView, HasDrawerToggle {
             }
             Screens.PRIZES_SCREEN -> PrizesFragment()
             Screens.SETTINGS_SCREEN -> SettingsFragment()
+            Screens.QUEST_INFO_SCREEN -> QuestInfoFragment.newInstance(data as String)
             else -> null
         }
 

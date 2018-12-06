@@ -6,4 +6,5 @@ object Screens {
     const val QUESTS_SCREEN = "quests screen"
     const val PRIZES_SCREEN = "prizes screen"
     const val SETTINGS_SCREEN = "settings screen"
+    const val QUEST_INFO_SCREEN = "quest info screen"
 }

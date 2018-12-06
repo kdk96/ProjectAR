@@ -88,6 +88,11 @@ class SignUpFragment : BaseFragment(), SignUpView {
         super.onPause()
     }
 
+    override fun onDestroyView() {
+        (activity as AppCompatActivity).setSupportActionBar(null)
+        super.onDestroyView()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         clearComponentsOnDestroy(SignUpComponent::class.java)

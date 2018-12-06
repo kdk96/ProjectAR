@@ -11,7 +11,7 @@ class ApiAuthenticator(private val authHolder: AuthHolder) : Authenticator {
         const val AUTH_HEADER = "Authorization"
     }
 
-    override fun authenticate(route: Route, response: Response): Request? {
+    override fun authenticate(route: Route?, response: Response): Request? {
         var accessToken: String? = null
         val requestToken = response.request().header(AUTH_HEADER)
         synchronized(this) {
