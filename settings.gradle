@@ -10,4 +10,5 @@ include ':common',
         ':database',
         ':quests-api',
         ':feature-prizes',
-        ':feature-questinfo'
+        ':feature-questinfo',
+        ':permission'

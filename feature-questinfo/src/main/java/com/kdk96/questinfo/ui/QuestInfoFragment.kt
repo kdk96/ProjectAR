@@ -1,9 +1,12 @@
 package com.kdk96.questinfo.ui
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.support.design.widget.BottomSheetBehavior
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
+import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -13,11 +16,13 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.kdk96.common.di.findComponentDependencies
 import com.kdk96.common.ui.BaseFragment
 import com.kdk96.glide.GlideApp
+import com.kdk96.permission.PermissionHelper
 import com.kdk96.questinfo.R
 import com.kdk96.questinfo.di.DaggerQuestInfoComponent
 import com.kdk96.questinfo.di.QuestInfoComponent
 import com.kdk96.questinfo.domain.entity.Prize
 import com.kdk96.questinfo.domain.entity.QuestInfo
+import com.kdk96.questinfo.presentation.ButtonState
 import com.kdk96.questinfo.presentation.QuestInfoPresenter
 import com.kdk96.questinfo.presentation.QuestInfoView
 import kotlinx.android.synthetic.main.content_bottom_sheet.*
@@ -25,14 +30,17 @@ import kotlinx.android.synthetic.main.fragment_quest_info.*
 import org.threeten.bp.Instant
 import org.threeten.bp.ZoneId
 import org.threeten.bp.format.DateTimeFormatter
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class QuestInfoFragment : BaseFragment(), QuestInfoView {
+class QuestInfoFragment : BaseFragment(), QuestInfoView, CancelParticipationDialogFragment.CancelConfirmedListener {
     companion object {
         private const val ARG_ID = "id argument"
         fun newInstance(id: String) = QuestInfoFragment().apply {
             arguments = Bundle().apply { putString(ARG_ID, id) }
         }
+
+        const val ACCESS_FINE_LOCATION_REQUEST = 101
     }
 
     override val layoutRes = R.layout.fragment_quest_info
@@ -40,6 +48,18 @@ class QuestInfoFragment : BaseFragment(), QuestInfoView {
     @Inject
     @InjectPresenter
     lateinit var presenter: QuestInfoPresenter
+    private val permissionHelper = PermissionHelper()
+    private val isLocationPermissionGranted: Boolean
+        get() = permissionHelper.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                ACCESS_FINE_LOCATION_REQUEST,
+                R.string.access_fine_location_permission_rationale_dialog_message
+        )
+    private val onParticipateClickListener: (view: View) -> Unit = { presenter.onParticipateClick() }
+    private val onStartClickListener: (view: View) -> Unit = { presenter.onStartClick() }
+    private val onWaitClickListener: (view: View) -> Unit = { presenter.onRemainingTimeClick() }
+    private val waitButtonString by lazy { getString(R.string.quest_will_start_in) }
 
     @ProvidePresenter
     fun providePresenter() = presenter
@@ -49,6 +69,12 @@ class QuestInfoFragment : BaseFragment(), QuestInfoView {
     override fun onCreate(savedInstanceState: Bundle?) {
         getComponent<QuestInfoComponent>().inject(this)
         super.onCreate(savedInstanceState)
+        permissionHelper.listener = object : PermissionHelper.RequestPermissionsResultListener {
+            override fun onPermissionGranted(requestCode: Int) = when (requestCode) {
+                ACCESS_FINE_LOCATION_REQUEST -> enableMyLocation()
+                else -> Unit
+            }
+        }
     }
 
     override fun buildComponent() = DaggerQuestInfoComponent.builder()
@@ -65,8 +91,16 @@ class QuestInfoFragment : BaseFragment(), QuestInfoView {
         mapView.getMapAsync {
             this.map = it
             it.setPadding(0, 0, 0, BottomSheetBehavior.from(bottomSheet).peekHeight)
+            if (isLocationPermissionGranted) {
+                enableMyLocation()
+            }
             presenter.onMapReady()
         }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun enableMyLocation() {
+        map?.isMyLocationEnabled = true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -117,11 +151,53 @@ class QuestInfoFragment : BaseFragment(), QuestInfoView {
         })
     }
 
+    override fun changeButtonState(state: ButtonState) {
+        when (state) {
+            ButtonState.PARTICIPATE -> {
+                participateButton.setText(R.string.participate_for_free)
+                participateButton.setOnClickListener(onParticipateClickListener)
+            }
+            ButtonState.START -> {
+                participateButton.setText(R.string.start_the_quest)
+                participateButton.setOnClickListener(onStartClickListener)
+            }
+            ButtonState.WAIT -> {
+                participateButton.setOnClickListener(onWaitClickListener)
+            }
+        }
+        participateButton.isEnabled = true
+    }
+
+    override fun showRemainingTime(remainingTime: Long) {
+        participateButton.text = getRemainingTimeString(remainingTime)
+    }
+
+    private fun getRemainingTimeString(remainingTime: Long): String {
+        val timeString: String
+        val days = TimeUnit.MILLISECONDS.toDays(remainingTime)
+        if (days > 0) {
+            timeString = resources.getQuantityString(R.plurals.days, days.toInt(), days)
+        } else {
+            val hours = TimeUnit.MILLISECONDS.toHours(remainingTime)
+            var time = remainingTime - TimeUnit.HOURS.toMillis(hours)
+            val minutes = TimeUnit.MILLISECONDS.toMinutes(time)
+            time -= TimeUnit.MINUTES.toMillis(minutes)
+            val seconds = TimeUnit.MILLISECONDS.toSeconds(time)
+            timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds)
+        }
+        return "$waitButtonString $timeString"
+    }
+
+    override fun showCancelConfirmationDialog() =
+            CancelParticipationDialogFragment.newInstance(this)
+                    .show(fragmentManager, "cancel dialog")
+
+    override fun onCancelConfirmed() = presenter.onCancelConfirmed()
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         mapView.onSaveInstanceState(outState)
     }
-
 
     override fun onLowMemory() {
         super.onLowMemory()
@@ -147,6 +223,11 @@ class QuestInfoFragment : BaseFragment(), QuestInfoView {
         mapView.onStop()
         super.onStop()
     }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) =
+            permissionHelper.onRequestPermissionsResult(this, requestCode, permissions, grantResults,
+                    mapOf(ACCESS_FINE_LOCATION_REQUEST to R.string.access_fine_location_permission_rationale_dialog_message)
+            )
 
     override fun onBackPressed() = presenter.onBackPressed()
 

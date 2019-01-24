@@ -10,5 +10,6 @@ data class QuestInfo(
         val companyLogoUrl: String,
         val startPointLat: Double,
         val startPointLng: Double,
-        val prizes: List<Prize>
+        val prizes: List<Prize>,
+        val playerId: String?
 )

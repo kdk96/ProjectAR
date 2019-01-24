@@ -1,4 +1,4 @@
-package com.kdk96.settings.ui
+package com.kdk96.permission
 
 import android.app.Dialog
 import android.os.Bundle

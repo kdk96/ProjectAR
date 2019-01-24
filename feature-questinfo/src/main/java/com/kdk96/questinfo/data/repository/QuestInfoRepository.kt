@@ -9,4 +9,10 @@ class QuestInfoRepository(
 ) {
     fun getQuestInfo(questId: String) = api.getQuestInfo(questId)
             .subscribeOn(ioScheduler)
+
+    fun participateInQuest(questId: String) = api.participateInQuest(questId)
+            .subscribeOn(ioScheduler)
+
+    fun cancelParticipationInQuest(playerId: String) = api.cancelParticipation(playerId)
+            .subscribeOn(ioScheduler)
 }
