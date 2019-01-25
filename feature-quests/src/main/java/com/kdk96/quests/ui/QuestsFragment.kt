@@ -22,7 +22,7 @@ import javax.inject.Inject
 
 class QuestsFragment : BaseFragment(), QuestsView {
     override val layoutRes = R.layout.fragment_quests
-    private val adapter by lazy { QuestsAdapter() }
+    private val adapter by lazy { QuestsAdapter { presenter.onQuestClick(it) } }
     private val viewHandler = Handler()
     @Inject
     @InjectPresenter

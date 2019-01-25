@@ -1,0 +1,15 @@
+<resources>
+    <string name="about_quest">About quest</string>
+    <string name="participate_for_free">Participate for free</string>
+    <string name="place">place</string>
+    <string name="others">Others</string>
+    <string name="start_point">Start point</string>
+    <string name="access_fine_location_permission_rationale_dialog_message">Access to location is required to show your location</string>
+    <string name="start_the_quest">Start the quest</string>
+    <string name="quest_will_start_in">Quest will start in</string>
+    <plurals name="days">
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
+    <string name="cancel_participation_message">Do you really want to cancel participation?</string>
+</resources>

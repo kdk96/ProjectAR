@@ -13,7 +13,7 @@ import com.kdk96.common.di.findComponentDependencies
 import com.kdk96.common.ui.BaseFragment
 import com.kdk96.common.ui.HasDrawerToggle
 import com.kdk96.glide.GlideApp
-import com.kdk96.settings.PermissionHelper
+import com.kdk96.permission.PermissionHelper
 import com.kdk96.settings.R
 import com.kdk96.settings.data.storage.AvatarFileProcessor
 import com.kdk96.settings.di.DaggerSettingsComponent
@@ -37,8 +37,7 @@ class SettingsFragment : BaseFragment(), SettingsView {
     @Inject
     @InjectPresenter
     lateinit var presenter: SettingsPresenter
-    @Inject
-    lateinit var permissionHelper: PermissionHelper
+    private val permissionHelper = PermissionHelper()
 
     @ProvidePresenter
     fun providePresenter() = presenter

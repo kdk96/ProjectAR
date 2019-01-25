@@ -2,6 +2,7 @@ package com.kdk96.quests.presenatation
 
 import com.arellomobile.mvp.InjectViewState
 import com.kdk96.common.presentation.BasePresenter
+import com.kdk96.common.presentation.Screens
 import com.kdk96.quests.R
 import com.kdk96.quests.domain.QuestsInteractor
 import io.reactivex.Scheduler
@@ -36,6 +37,8 @@ class QuestsPresenter(
                 }
             })
             .connect()
+
+    fun onQuestClick(id: String) = router.navigateTo(Screens.QUEST_INFO_SCREEN, id)
 
     fun onBackPressed() = router.exit()
 }

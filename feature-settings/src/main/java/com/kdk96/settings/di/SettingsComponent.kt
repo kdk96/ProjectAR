@@ -3,7 +3,6 @@ package com.kdk96.settings.di
 import com.kdk96.common.di.Component
 import com.kdk96.common.di.PerFragment
 import com.kdk96.common.di.Rx
-import com.kdk96.settings.PermissionHelper
 import com.kdk96.settings.domain.AccountInteractor
 import com.kdk96.settings.presentation.SettingsPresenter
 import com.kdk96.settings.ui.SettingsFragment
@@ -31,9 +30,4 @@ object SettingsModule {
             accountInteractor: AccountInteractor,
             @Rx.MainThread mainThreadScheduler: Scheduler
     ) = SettingsPresenter(router, accountInteractor, mainThreadScheduler)
-
-    @Provides
-    @JvmStatic
-    @PerFragment
-    fun providePermissionHelper() = PermissionHelper()
 }

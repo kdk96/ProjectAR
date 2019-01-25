@@ -41,4 +41,5 @@ dependencies {
     implementation "android.arch.persistence.room:runtime:$room_version"
     implementation project(':database')
     implementation project(':feature-prizes')
+    implementation project(':feature-questinfo')
 }

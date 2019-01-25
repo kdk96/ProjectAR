@@ -1,4 +1,4 @@
-package com.kdk96.settings
+package com.kdk96.permission
 
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -7,7 +7,6 @@ import android.provider.Settings
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
-import com.kdk96.settings.ui.RationaleDialog
 
 class PermissionHelper {
     interface RequestPermissionsResultListener {
