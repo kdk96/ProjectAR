@@ -11,8 +11,6 @@ import android.widget.TextView
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.jakewharton.rxbinding2.widget.textChanges
-import com.kdk96.auth.di.auth.AuthComponent
-import com.kdk96.auth.di.auth.DaggerAuthComponent
 import com.kdk96.auth.di.signin.DaggerSignInComponent
 import com.kdk96.auth.di.signin.SignInComponent
 import com.kdk96.auth.presentation.signin.SignInPresenter
@@ -29,6 +27,13 @@ import javax.inject.Inject
 
 class SignInFragment : BaseFragment(), SignInView {
     override val layoutRes = R.layout.fragment_sign_in
+
+    init {
+        componentBuilder = {
+            DaggerSignInComponent.builder().childDependencies(findComponentDependencies()).build()
+        }
+    }
+
     @Inject
     @InjectPresenter
     lateinit var presenter: SignInPresenter
@@ -38,21 +43,11 @@ class SignInFragment : BaseFragment(), SignInView {
 
     private val animationHandler = Handler()
     private val fieldsChangesCompositeDisposable = CompositeDisposable()
-    private lateinit var authComponent: AuthComponent
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        authComponent = getComponent {
-            DaggerAuthComponent.builder()
-                    .authDependencies(findComponentDependencies())
-                    .build()
-        }
         getComponent<SignInComponent>().inject(this)
         super.onCreate(savedInstanceState)
     }
-
-    override fun buildComponent() = DaggerSignInComponent.builder()
-            .signInDependencies(authComponent)
-            .build()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -86,11 +81,6 @@ class SignInFragment : BaseFragment(), SignInView {
     override fun onPause() {
         fieldsChangesCompositeDisposable.clear()
         super.onPause()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        clearComponentsOnDestroy(AuthComponent::class.java, SignInComponent::class.java)
     }
 
     override fun showProgress(show: Boolean) = ConstraintSet().run {

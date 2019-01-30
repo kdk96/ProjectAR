@@ -1,16 +1,14 @@
 package com.kdk96.common.di
 
-interface Component
+interface DaggerComponent
 
-interface HasComponent
+object ComponentManager {
+    private val components = mutableMapOf<String, DaggerComponent>()
 
-typealias ChildComponents = MutableMap<Class<out Component>, Component>
+    fun getOrPutComponent(componentName: String, componentBuilder: () -> DaggerComponent) =
+            components.getOrPut(componentName, componentBuilder)
 
-interface ComponentManager {
-    val components: ChildComponents
+    fun clearComponent(componentName: String) {
+        components.remove(componentName)
+    }
 }
-
-inline fun <reified T : Component> HasComponent.getComponent(
-        componentManager: ComponentManager,
-        componentBuilder: () -> Component
-) = componentManager.components.getOrPut(T::class.java, componentBuilder) as T

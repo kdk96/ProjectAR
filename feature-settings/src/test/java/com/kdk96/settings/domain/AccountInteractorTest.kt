@@ -9,6 +9,7 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.*
 import ru.terrakok.cicerone.Router
+import ru.terrakok.cicerone.android.support.SupportAppScreen
 import java.io.IOException
 
 class AccountInteractorTest {
@@ -30,7 +31,12 @@ class AccountInteractorTest {
     fun setUp() {
         accountRepository = mock(AccountRepository::class.java)
         router = mock(Router::class.java)
-        accountInteractor = AccountInteractor(accountRepository, router, Schedulers.trampoline())
+        accountInteractor = AccountInteractor(
+                accountRepository,
+                router,
+                Schedulers.trampoline(),
+                object : SupportAppScreen() {}
+        )
     }
 
     @Test

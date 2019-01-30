@@ -1,29 +1,33 @@
 package com.kdk96.projectar.di
 
 import android.content.Context
-import com.kdk96.auth.di.auth.AuthDependencies
-import com.kdk96.common.di.ChildComponents
+import com.kdk96.auth.di.auth.AuthFlowDependencies
+import com.kdk96.auth.ui.AuthFlowReachableScreens
 import com.kdk96.common.di.ComponentDependencies
 import com.kdk96.common.di.ComponentDependenciesKey
 import com.kdk96.common.di.Rx
-import com.kdk96.prizes.di.PrizesDependencies
+import com.kdk96.main.di.MainFlowDependencies
+import com.kdk96.main.ui.MainFlowReachableScreens
 import com.kdk96.projectar.App
 import com.kdk96.projectar.di.account.AccountModule
 import com.kdk96.projectar.di.auth.AuthApiModule
 import com.kdk96.projectar.di.auth.AuthModule
 import com.kdk96.projectar.di.database.DatabaseModule
 import com.kdk96.projectar.di.glide.GlideModule
-import com.kdk96.projectar.di.main.MainDependencies
 import com.kdk96.projectar.di.network.ServerApiModule
-import com.kdk96.questinfo.di.QuestInfoDependencies
-import com.kdk96.quests.di.QuestsDependencies
-import com.kdk96.settings.di.SettingsDependencies
+import com.kdk96.projectar.presentation.Launcher
+import com.kdk96.projectar.ui.AppActivity
+import com.kdk96.projectar.ui.RootScreens
+import com.kdk96.quest.di.QuestFlowDependencies
+import com.kdk96.quest.ui.QuestFlowFragment
+import com.kdk96.settings.domain.AccountInteractor
 import dagger.*
 import dagger.multibindings.IntoMap
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import ru.terrakok.cicerone.Cicerone
 import ru.terrakok.cicerone.Router
+import ru.terrakok.cicerone.android.support.SupportAppScreen
 import javax.inject.Singleton
 
 @Singleton
@@ -39,7 +43,7 @@ import javax.inject.Singleton
     DatabaseModule::class,
     ServerApiModule::class
 ])
-interface AppComponent : MainDependencies, AuthDependencies, SettingsDependencies, QuestsDependencies, PrizesDependencies, QuestInfoDependencies {
+interface AppComponent : AuthFlowDependencies, MainFlowDependencies, QuestFlowDependencies {
     @Component.Builder
     interface Builder {
         @BindsInstance
@@ -49,6 +53,7 @@ interface AppComponent : MainDependencies, AuthDependencies, SettingsDependencie
     }
 
     fun inject(app: App)
+    fun inject(appActivity: AppActivity)
 }
 
 @Module
@@ -56,7 +61,10 @@ object AppModule {
     @Provides
     @JvmStatic
     @Singleton
-    fun provideChildComponents(): ChildComponents = mutableMapOf()
+    fun provideLauncher(
+            router: Router,
+            accountInteractor: AccountInteractor
+    ) = Launcher(router, accountInteractor)
 }
 
 @Module
@@ -65,7 +73,7 @@ object SchedulersModule {
     @JvmStatic
     @Singleton
     @Rx.MainThread
-    fun provideMainThreadScheduler() = AndroidSchedulers.mainThread()!!
+    fun provideMainThreadScheduler() = AndroidSchedulers.mainThread()
 
     @Provides
     @JvmStatic
@@ -79,48 +87,51 @@ object NavigationModule {
     @Provides
     @JvmStatic
     @Singleton
-    fun provideCicerone() = Cicerone.create()!!
+    fun provideCicerone() = Cicerone.create()
 
     @Provides
     @JvmStatic
     @Singleton
-    fun provideRouter(cicerone: Cicerone<Router>) = cicerone.router!!
+    fun provideRouter(cicerone: Cicerone<Router>) = cicerone.router
 
     @Provides
     @JvmStatic
     @Singleton
-    fun provideNavigatorHolder(cicerone: Cicerone<Router>) = cicerone.navigatorHolder!!
+    fun provideNavigatorHolder(cicerone: Cicerone<Router>) = cicerone.navigatorHolder
+
+    @Provides
+    @JvmStatic
+    @Singleton
+    fun provideAuthFlowReachableScreens() = object : AuthFlowReachableScreens {
+        override fun mainFlow() = RootScreens.MainFlow
+    }
+
+    @Provides
+    @JvmStatic
+    @Singleton
+    fun provideMainFlowReachableScreens() = object : MainFlowReachableScreens {
+        override fun questFlow(id: String) = object : SupportAppScreen() {
+            override fun getFragment() = QuestFlowFragment.newInstance(id)
+        }
+
+        override fun authFlow() = RootScreens.AuthFlow
+    }
 }
 
 @Module
 interface ComponentDependenciesModule {
     @Binds
     @IntoMap
-    @ComponentDependenciesKey(MainDependencies::class)
-    fun provideMainDependencies(appComponent: AppComponent): ComponentDependencies
+    @ComponentDependenciesKey(AuthFlowDependencies::class)
+    fun provideAuthFlowDependencies(appComponent: AppComponent): ComponentDependencies
 
     @Binds
     @IntoMap
-    @ComponentDependenciesKey(AuthDependencies::class)
-    fun provideSignInDependencies(appComponent: AppComponent): ComponentDependencies
+    @ComponentDependenciesKey(MainFlowDependencies::class)
+    fun provideMainFlowDependencies(appComponent: AppComponent): ComponentDependencies
 
     @Binds
     @IntoMap
-    @ComponentDependenciesKey(SettingsDependencies::class)
-    fun provideSettingsDependencies(appComponent: AppComponent): ComponentDependencies
-
-    @Binds
-    @IntoMap
-    @ComponentDependenciesKey(QuestsDependencies::class)
-    fun provideQuestsDependencies(appComponent: AppComponent): ComponentDependencies
-
-    @Binds
-    @IntoMap
-    @ComponentDependenciesKey(PrizesDependencies::class)
-    fun providePrizesDependencies(appComponent: AppComponent): ComponentDependencies
-
-    @Binds
-    @IntoMap
-    @ComponentDependenciesKey(QuestInfoDependencies::class)
-    fun provideQuestInfoDependencies(appComponent: AppComponent): ComponentDependencies
+    @ComponentDependenciesKey(QuestFlowDependencies::class)
+    fun provideQuestFlowDependencies(appComponent: AppComponent): ComponentDependencies
 }

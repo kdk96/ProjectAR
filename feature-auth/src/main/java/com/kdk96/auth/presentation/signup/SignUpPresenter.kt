@@ -3,11 +3,11 @@ package com.kdk96.auth.presentation.signup
 import com.arellomobile.mvp.InjectViewState
 import com.kdk96.auth.domain.*
 import com.kdk96.auth.screen.R
+import com.kdk96.auth.ui.AuthFlowReachableScreens
 import com.kdk96.common.di.Rx
 import com.kdk96.common.presentation.BasePresenter
-import com.kdk96.common.presentation.Screens
+import com.kdk96.common.presentation.FlowRouter
 import io.reactivex.Scheduler
-import ru.terrakok.cicerone.Router
 import java.io.IOException
 import javax.inject.Inject
 
@@ -15,8 +15,9 @@ import javax.inject.Inject
 class SignUpPresenter @Inject constructor(
         private var email: String,
         private val interactor: AuthInteractor,
-        private val router: Router,
-        @Rx.MainThread private val mainThreadScheduler: Scheduler
+        private val router: FlowRouter,
+        @Rx.MainThread private val mainThreadScheduler: Scheduler,
+        private val screens: AuthFlowReachableScreens
 ) : BasePresenter<SignUpView>() {
     private var name = ""
     private var password = ""
@@ -54,7 +55,7 @@ class SignUpPresenter @Inject constructor(
             interactor.signUp(email, name, password, passwordConfirmation)
                     .observeOn(mainThreadScheduler)
                     .doOnSubscribe { viewState.showProgress(true) }
-                    .subscribe({ router.newRootScreen(Screens.QUESTS_SCREEN) },
+                    .subscribe({ router.newRootFlow(screens.mainFlow()) },
                             {
                                 viewState.showProgress(false)
                                 onError(it)

@@ -2,13 +2,9 @@ package com.kdk96.auth.ui
 
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity
-import android.view.MenuItem
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.jakewharton.rxbinding2.widget.textChanges
-import com.kdk96.auth.di.auth.AuthComponent
-import com.kdk96.auth.di.auth.DaggerAuthComponent
 import com.kdk96.auth.di.signup.DaggerSignUpComponent
 import com.kdk96.auth.di.signup.SignUpComponent
 import com.kdk96.auth.presentation.signup.SignUpPresenter
@@ -32,6 +28,15 @@ class SignUpFragment : BaseFragment(), SignUpView {
 
     override val layoutRes = R.layout.fragment_sign_up
 
+    init {
+        componentBuilder = {
+            DaggerSignUpComponent.builder()
+                    .email(arguments!!.getString(ARG_EMAIL)!!)
+                    .childDependencies(findComponentDependencies())
+                    .build()
+        }
+    }
+
     @Inject
     @InjectPresenter
     lateinit var presenter: SignUpPresenter
@@ -40,39 +45,19 @@ class SignUpFragment : BaseFragment(), SignUpView {
     fun providePresenter() = presenter
 
     private val fieldsChangesCompositeDisposable = CompositeDisposable()
-    private lateinit var authComponent: AuthComponent
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        authComponent = getComponent {
-            DaggerAuthComponent.builder()
-                    .authDependencies(findComponentDependencies())
-                    .build()
-        }
         getComponent<SignUpComponent>().inject(this)
         super.onCreate(savedInstanceState)
     }
 
-    override fun buildComponent() = DaggerSignUpComponent.builder()
-            .email(arguments!!.getString(ARG_EMAIL)!!)
-            .signUpDependencies(authComponent)
-            .build()
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        (activity as AppCompatActivity).setSupportActionBar(toolbar)
-        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        setHasOptionsMenu(true)
+        toolbar.setNavigationOnClickListener { presenter.onBackPressed() }
         signUpButton.setOnClickListener {
             presenter.onSignUpClick(emailET.trimmedString, nameET.trimmedString,
                     passwordET.trimmedString, passwordConfirmationET.trimmedString)
         }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            presenter.onBackPressed()
-        }
-        return super.onOptionsItemSelected(item)
     }
 
     override fun onResume() {
@@ -86,16 +71,6 @@ class SignUpFragment : BaseFragment(), SignUpView {
     override fun onPause() {
         fieldsChangesCompositeDisposable.clear()
         super.onPause()
-    }
-
-    override fun onDestroyView() {
-        (activity as AppCompatActivity).setSupportActionBar(null)
-        super.onDestroyView()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        clearComponentsOnDestroy(SignUpComponent::class.java)
     }
 
     override fun setEmail(email: String) = emailET.setText(email)

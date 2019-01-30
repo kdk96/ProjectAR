@@ -3,18 +3,18 @@ package com.kdk96.settings.presentation
 import com.arellomobile.mvp.InjectViewState
 import com.kdk96.common.di.Rx
 import com.kdk96.common.presentation.BasePresenter
-import com.kdk96.common.presentation.Screens
+import com.kdk96.common.presentation.FlowRouter
 import com.kdk96.settings.R
 import com.kdk96.settings.domain.AccountInteractor
 import io.reactivex.Scheduler
-import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
 @InjectViewState
 class SettingsPresenter @Inject constructor(
-        private val router: Router,
+        private val router: FlowRouter,
         private val accountInteractor: AccountInteractor,
-        @Rx.MainThread private val mainThreadScheduler: Scheduler
+        @Rx.MainThread private val mainThreadScheduler: Scheduler,
+        private val screens: SettingsReachableScreens
 ) : BasePresenter<SettingsView>() {
     override fun onFirstViewAttach() {
         accountInteractor.accountDataChanges
@@ -45,7 +45,7 @@ class SettingsPresenter @Inject constructor(
             .observeOn(mainThreadScheduler)
             .doOnSubscribe { viewState.showProgress(true) }
             .doOnTerminate { viewState.showProgress(false) }
-            .subscribe { router.newRootScreen(Screens.SIGN_IN_SCREEN) }
+            .subscribe { router.newRootFlow(screens.authFlow()) }
             .connect()
 
     fun onBackPressed() = router.exit()

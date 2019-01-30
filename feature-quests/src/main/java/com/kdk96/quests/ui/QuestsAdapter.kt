@@ -13,7 +13,6 @@ import kotlinx.android.synthetic.main.item_quest.view.*
 import org.threeten.bp.Instant
 import org.threeten.bp.ZoneId
 import org.threeten.bp.format.DateTimeFormatter
-import java.util.*
 
 class QuestsAdapter(
         private val clickListener: (id: String) -> Unit

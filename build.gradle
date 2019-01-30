@@ -3,7 +3,7 @@ buildscript {
     ext.support_version = '28.0.0'
     ext.dagger_version = '2.21'
     ext.moxy_version = '1.5.3'
-    ext.cicerone_version = '3.0.0'
+    ext.cicerone_version = '4.0.2'
     ext.rxjava_version = '2.2.5'
     ext.rxandroid_version = '2.1.0'
     ext.rxbinding_version = '2.1.1'

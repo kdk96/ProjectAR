@@ -6,6 +6,7 @@ import com.kdk96.auth.data.storage.Prefs
 import com.kdk96.common.di.Rx
 import com.kdk96.database.Database
 import com.kdk96.glide.GlideCacheCleaner
+import com.kdk96.projectar.ui.RootScreens
 import com.kdk96.settings.data.network.AccountApi
 import com.kdk96.settings.data.repository.AccountRepository
 import com.kdk96.settings.data.storage.AvatarFileProcessor
@@ -58,5 +59,5 @@ object AccountModule {
             accountRepository: AccountRepository,
             router: Router,
             @Rx.MainThread mainThreadScheduler: Scheduler
-    ) = AccountInteractor(accountRepository, router, mainThreadScheduler)
+    ) = AccountInteractor(accountRepository, router, mainThreadScheduler, RootScreens.AuthFlow)
 }
