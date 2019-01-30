@@ -1,31 +1,23 @@
 package com.kdk96.questinfo.di
 
-import com.kdk96.common.di.Component
+import com.kdk96.common.di.DaggerComponent
 import com.kdk96.common.di.PerFragment
 import com.kdk96.common.di.Rx
+import com.kdk96.common.presentation.FlowRouter
 import com.kdk96.questinfo.data.network.QuestInfoApi
 import com.kdk96.questinfo.data.repository.QuestInfoRepository
 import com.kdk96.questinfo.domain.QuestInfoInteractor
 import com.kdk96.questinfo.presentation.QuestInfoPresenter
 import com.kdk96.questinfo.ui.QuestInfoFragment
-import dagger.BindsInstance
+import dagger.Component
 import dagger.Module
 import dagger.Provides
 import io.reactivex.Scheduler
 import retrofit2.Retrofit
-import ru.terrakok.cicerone.Router
 
 @PerFragment
-@dagger.Component(modules = [QuestInfoModule::class], dependencies = [QuestInfoDependencies::class])
-interface QuestInfoComponent : Component {
-    @dagger.Component.Builder
-    interface Builder {
-        @BindsInstance
-        fun id(id: String): Builder
-        fun questInfoDependencies(questInfoDependencies: QuestInfoDependencies): Builder
-        fun build(): QuestInfoComponent
-    }
-
+@Component(modules = [QuestInfoModule::class], dependencies = [QuestInfoDependencies::class])
+interface QuestInfoComponent : DaggerComponent {
     fun inject(questInfoFragment: QuestInfoFragment)
 }
 
@@ -52,8 +44,8 @@ object QuestInfoModule {
     @JvmStatic
     @PerFragment
     fun provideQuestInfoPresenter(
-            router: Router,
+            flowRouter: FlowRouter,
             questInfoInteractor: QuestInfoInteractor,
             @Rx.MainThread mainThreadScheduler: Scheduler
-    ) = QuestInfoPresenter(router, questInfoInteractor, mainThreadScheduler)
+    ) = QuestInfoPresenter(flowRouter, questInfoInteractor, mainThreadScheduler)
 }

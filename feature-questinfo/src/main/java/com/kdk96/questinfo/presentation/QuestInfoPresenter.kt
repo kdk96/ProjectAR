@@ -2,6 +2,7 @@ package com.kdk96.questinfo.presentation
 
 import com.arellomobile.mvp.InjectViewState
 import com.kdk96.common.presentation.BasePresenter
+import com.kdk96.common.presentation.FlowRouter
 import com.kdk96.questinfo.domain.LatLngPair
 import com.kdk96.questinfo.domain.QuestInfoInteractor
 import com.kdk96.questinfo.domain.entity.QuestInfo
@@ -9,12 +10,11 @@ import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.BehaviorSubject
-import ru.terrakok.cicerone.Router
 import java.util.concurrent.TimeUnit
 
 @InjectViewState
 class QuestInfoPresenter(
-        private val router: Router,
+        private val router: FlowRouter,
         private val interactor: QuestInfoInteractor,
         private val mainThreadScheduler: Scheduler
 ) : BasePresenter<QuestInfoView>() {

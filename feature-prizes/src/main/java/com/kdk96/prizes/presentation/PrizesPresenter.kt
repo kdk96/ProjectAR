@@ -2,15 +2,15 @@ package com.kdk96.prizes.presentation
 
 import com.arellomobile.mvp.InjectViewState
 import com.kdk96.common.presentation.BasePresenter
+import com.kdk96.common.presentation.FlowRouter
 import com.kdk96.prizes.R
 import com.kdk96.prizes.domain.PrizesInteractor
 import io.reactivex.Scheduler
-import ru.terrakok.cicerone.Router
 import java.io.IOException
 
 @InjectViewState
 class PrizesPresenter(
-        private val router: Router,
+        private val router: FlowRouter,
         private val interactor: PrizesInteractor,
         private val mainThreadScheduler: Scheduler
 ) : BasePresenter<PrizesView>() {

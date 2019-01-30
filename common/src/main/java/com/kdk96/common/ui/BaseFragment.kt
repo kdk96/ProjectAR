@@ -4,25 +4,49 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.arellomobile.mvp.MvpAppCompatFragment
-import com.kdk96.common.di.*
+import com.kdk96.common.di.ComponentManager
+import com.kdk96.common.di.DaggerComponent
 
-abstract class BaseFragment : MvpAppCompatFragment(), HasComponent {
+abstract class BaseFragment : MvpAppCompatFragment() {
     companion object {
         private const val TAG_PROGRESS = "progress"
     }
 
     protected abstract val layoutRes: Int
+    protected lateinit var componentBuilder: () -> DaggerComponent
+    private var instanceStateSaved: Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
             inflater.inflate(layoutRes, container, false)
 
-    protected inline fun <reified T : Component> getComponent(
-            componentBuilder: () -> Component = ::buildComponent
-    ) = getComponent<T>(findComponentManager(), componentBuilder)
+    protected inline fun <reified T : DaggerComponent> getComponent(): T =
+            ComponentManager.getOrPutComponent(this.javaClass.simpleName, componentBuilder) as T
 
-    protected fun findComponentManager() = findForInjection<ComponentManager>()
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        instanceStateSaved = true
+    }
 
-    protected abstract fun buildComponent(): Component
+    override fun onResume() {
+        super.onResume()
+        instanceStateSaved = false
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (needClearComponent()) {
+            ComponentManager.clearComponent(this.javaClass.simpleName)
+        }
+    }
+
+    private fun needClearComponent(): Boolean = when {
+        activity?.isChangingConfigurations == true -> false
+        activity?.isFinishing == true -> true
+        else -> isRealRemoving()
+    }
+
+    private fun isRealRemoving(): Boolean = (isRemoving && !instanceStateSaved)
+            || ((parentFragment as? BaseFragment)?.isRealRemoving() ?: false)
 
     protected fun showProgressDialog(show: Boolean, resId: Int? = null) {
         if (!isAdded) return
@@ -37,22 +61,5 @@ abstract class BaseFragment : MvpAppCompatFragment(), HasComponent {
         }
     }
 
-    protected fun clearComponentsOnDestroy(vararg components: Class<out Component>) {
-        if (activity!!.isFinishing) clearComponents(components)
-        if (isStateSaved) return
-        var anyParentIsRemoving = false
-        var parent = parentFragment
-        while (!anyParentIsRemoving && parent != null) {
-            anyParentIsRemoving = parent.isRemoving
-            parent = parent.parentFragment
-        }
-        if (isRemoving || anyParentIsRemoving) clearComponents(components)
-    }
-
-    private fun clearComponents(componentsForRemove: Array<out Class<out Component>>) {
-        val components = findComponentManager().components
-        componentsForRemove.forEach { components.remove(it) }
-    }
-
-    abstract fun onBackPressed()
+    open fun onBackPressed() {}
 }

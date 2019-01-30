@@ -2,15 +2,15 @@ package com.kdk96.prizes.di
 
 import com.kdk96.common.di.ComponentDependencies
 import com.kdk96.common.di.Rx
+import com.kdk96.common.presentation.FlowRouter
 import io.reactivex.Scheduler
 import retrofit2.Retrofit
-import ru.terrakok.cicerone.Router
 
 interface PrizesDependencies : ComponentDependencies {
-    fun router(): Router
+    fun retrofit(): Retrofit
     @Rx.Io
     fun ioScheduler(): Scheduler
     @Rx.MainThread
     fun mainThreadScheduler(): Scheduler
-    fun retrofit(): Retrofit
+    fun flowRouter(): FlowRouter
 }

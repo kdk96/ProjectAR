@@ -4,8 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.support.design.widget.BottomSheetBehavior
-import android.support.v7.app.AppCompatActivity
-import android.view.MenuItem
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
@@ -35,19 +33,25 @@ import javax.inject.Inject
 
 class QuestInfoFragment : BaseFragment(), QuestInfoView, CancelParticipationDialogFragment.CancelConfirmedListener {
     companion object {
-        private const val ARG_ID = "id argument"
-        fun newInstance(id: String) = QuestInfoFragment().apply {
-            arguments = Bundle().apply { putString(ARG_ID, id) }
-        }
-
         const val ACCESS_FINE_LOCATION_REQUEST = 101
     }
 
     override val layoutRes = R.layout.fragment_quest_info
-    private var map: GoogleMap? = null
+
+    init {
+        componentBuilder = {
+            DaggerQuestInfoComponent.builder().questInfoDependencies(findComponentDependencies()).build()
+        }
+    }
+
     @Inject
     @InjectPresenter
     lateinit var presenter: QuestInfoPresenter
+
+    @ProvidePresenter
+    fun providePresenter() = presenter
+
+    private var map: GoogleMap? = null
     private val permissionHelper = PermissionHelper()
     private val isLocationPermissionGranted: Boolean
         get() = permissionHelper.requestPermissions(
@@ -56,15 +60,13 @@ class QuestInfoFragment : BaseFragment(), QuestInfoView, CancelParticipationDial
                 ACCESS_FINE_LOCATION_REQUEST,
                 R.string.access_fine_location_permission_rationale_dialog_message
         )
+
     private val onParticipateClickListener: (view: View) -> Unit = { presenter.onParticipateClick() }
     private val onStartClickListener: (view: View) -> Unit = { presenter.onStartClick() }
     private val onWaitClickListener: (view: View) -> Unit = { presenter.onRemainingTimeClick() }
+
     private val waitButtonString by lazy { getString(R.string.quest_will_start_in) }
-
-    @ProvidePresenter
-    fun providePresenter() = presenter
-
-    private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm, d MMM")
+    private val timeFormatter by lazy { DateTimeFormatter.ofPattern("HH:mm, d MMM") }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         getComponent<QuestInfoComponent>().inject(this)
@@ -77,16 +79,9 @@ class QuestInfoFragment : BaseFragment(), QuestInfoView, CancelParticipationDial
         }
     }
 
-    override fun buildComponent() = DaggerQuestInfoComponent.builder()
-            .id(arguments!!.getString(ARG_ID)!!)
-            .questInfoDependencies(findComponentDependencies())
-            .build()
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        (activity as AppCompatActivity).setSupportActionBar(toolbar)
-        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        setHasOptionsMenu(true)
+        toolbar.setNavigationOnClickListener { presenter.onBackPressed() }
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync {
             this.map = it
@@ -101,13 +96,6 @@ class QuestInfoFragment : BaseFragment(), QuestInfoView, CancelParticipationDial
     @SuppressLint("MissingPermission")
     private fun enableMyLocation() {
         map?.isMyLocationEnabled = true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            presenter.onBackPressed()
-        }
-        return super.onOptionsItemSelected(item)
     }
 
     override fun showInfo(questInfo: QuestInfo) {
@@ -232,13 +220,7 @@ class QuestInfoFragment : BaseFragment(), QuestInfoView, CancelParticipationDial
     override fun onBackPressed() = presenter.onBackPressed()
 
     override fun onDestroyView() {
-        (activity as AppCompatActivity).setSupportActionBar(null)
         mapView.onDestroy()
         super.onDestroyView()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        clearComponentsOnDestroy(QuestInfoComponent::class.java)
     }
 }

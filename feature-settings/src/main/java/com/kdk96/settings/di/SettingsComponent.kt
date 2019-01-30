@@ -1,22 +1,24 @@
 package com.kdk96.settings.di
 
-import com.kdk96.common.di.Component
+import com.kdk96.common.di.DaggerComponent
 import com.kdk96.common.di.PerFragment
 import com.kdk96.common.di.Rx
+import com.kdk96.common.presentation.FlowRouter
 import com.kdk96.settings.domain.AccountInteractor
 import com.kdk96.settings.presentation.SettingsPresenter
+import com.kdk96.settings.presentation.SettingsReachableScreens
 import com.kdk96.settings.ui.SettingsFragment
+import dagger.Component
 import dagger.Module
 import dagger.Provides
 import io.reactivex.Scheduler
-import ru.terrakok.cicerone.Router
 
 @PerFragment
-@dagger.Component(
+@Component(
         modules = [SettingsModule::class],
         dependencies = [SettingsDependencies::class]
 )
-interface SettingsComponent : Component {
+interface SettingsComponent : DaggerComponent {
     fun inject(settingsFragment: SettingsFragment)
 }
 
@@ -26,8 +28,9 @@ object SettingsModule {
     @JvmStatic
     @PerFragment
     fun provideSettingsPresenter(
-            router: Router,
+            flowRouter: FlowRouter,
             accountInteractor: AccountInteractor,
-            @Rx.MainThread mainThreadScheduler: Scheduler
-    ) = SettingsPresenter(router, accountInteractor, mainThreadScheduler)
+            @Rx.MainThread mainThreadScheduler: Scheduler,
+            screens: SettingsReachableScreens
+    ) = SettingsPresenter(flowRouter, accountInteractor, mainThreadScheduler, screens)
 }

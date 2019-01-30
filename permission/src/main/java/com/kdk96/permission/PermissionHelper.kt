@@ -6,6 +6,7 @@ import android.net.Uri
 import android.provider.Settings
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
 import android.support.v4.content.ContextCompat
 
 class PermissionHelper {
@@ -22,11 +23,15 @@ class PermissionHelper {
                            rationaleMessageResId: Int) =
             if (permissions.any { ContextCompat.checkSelfPermission(fragment.context!!, it) != PackageManager.PERMISSION_GRANTED }) {
                 if (permissions.any { fragment.shouldShowRequestPermissionRationale(it) }) {
-                    RationaleDialog.newInstance(fragment, rationaleMessageResId, permissions, requestCode)
-                            .show(fragment.fragmentManager, "rationale dialog")
+                    if (!isRationaleDialogShown(fragment.fragmentManager!!))
+                        RationaleDialog.newInstance(fragment, rationaleMessageResId, permissions, requestCode)
+                                .show(fragment.fragmentManager, "rationale dialog")
                 } else fragment.requestPermissions(permissions, requestCode)
                 false
             } else true
+
+    fun isRationaleDialogShown(fragmentManager: FragmentManager) =
+            fragmentManager.findFragmentByTag("rationale dialog") != null
 
     fun onRequestPermissionsResult(fragment: Fragment,
                                    requestCode: Int,
@@ -43,8 +48,9 @@ class PermissionHelper {
         }
         if (denied) {
             if (deniedPermissions.any { fragment.shouldShowRequestPermissionRationale(it) }) {
-                RationaleDialog.newInstance(fragment, onPermissionsDeniedMessages[requestCode]!!, deniedPermissions.toTypedArray(), requestCode)
-                        .show(fragment.fragmentManager, "rationale dialog")
+                if (!isRationaleDialogShown(fragment.fragmentManager!!))
+                    RationaleDialog.newInstance(fragment, onPermissionsDeniedMessages[requestCode]!!, deniedPermissions.toTypedArray(), requestCode)
+                            .show(fragment.fragmentManager, "rationale dialog")
             } else {
                 listener?.onPermissionDenied(requestCode)
                 val intent = Intent(

@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.kdk96.common.di.findComponentDependencies
@@ -32,15 +31,23 @@ class SettingsFragment : BaseFragment(), SettingsView {
     }
 
     override val layoutRes = R.layout.fragment_settings
+
+    init {
+        componentBuilder = {
+            DaggerSettingsComponent.builder().settingsDependencies(findComponentDependencies()).build()
+        }
+    }
+
     @Inject
     lateinit var avatarFileProcessor: AvatarFileProcessor
     @Inject
     @InjectPresenter
     lateinit var presenter: SettingsPresenter
-    private val permissionHelper = PermissionHelper()
 
     @ProvidePresenter
     fun providePresenter() = presenter
+
+    private val permissionHelper = PermissionHelper()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         getComponent<SettingsComponent>().inject(this)
@@ -55,15 +62,9 @@ class SettingsFragment : BaseFragment(), SettingsView {
         }
     }
 
-    override fun buildComponent() = DaggerSettingsComponent.builder()
-            .settingsDependencies(findComponentDependencies())
-            .build()
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        (activity as AppCompatActivity).setSupportActionBar(toolbar)
-        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        (activity as HasDrawerToggle).setupDrawerToggle(toolbar)
+        (parentFragment as? HasDrawerToggle)?.setupDrawerToggle(toolbar)
         avatarIV.setOnClickListener { presenter.onAvatarClick() }
         signOutButton.setOnClickListener { presenter.onSignOutClick() }
     }
@@ -140,14 +141,13 @@ class SettingsFragment : BaseFragment(), SettingsView {
     override fun showError(resId: Int) = Snackbar.make(view!!, resId, Snackbar.LENGTH_SHORT).show()
 
     override fun onDestroyView() {
-        (activity as HasDrawerToggle).removeDrawerToggle()
+        (parentFragment as? HasDrawerToggle)?.removeDrawerToggle()
         super.onDestroyView()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         permissionHelper.listener = null
-        clearComponentsOnDestroy(SettingsComponent::class.java)
     }
 
     override fun onBackPressed() = presenter.onBackPressed()

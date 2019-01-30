@@ -1,4 +1,4 @@
-package com.kdk96.projectar.presentation
+package com.kdk96.main.presentation
 
 import com.arellomobile.mvp.MvpView
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
