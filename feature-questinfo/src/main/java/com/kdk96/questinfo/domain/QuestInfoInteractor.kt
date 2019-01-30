@@ -8,7 +8,7 @@ class QuestInfoInteractor(
         private val questId: String,
         private val questInfoRepository: QuestInfoRepository
 ) {
-    private var playerId: String? = null
+    var playerId: String? = null
 
     fun getQuestInfo() = questInfoRepository.getQuestInfo(questId)
             .doOnSuccess { playerId = it.playerId }
