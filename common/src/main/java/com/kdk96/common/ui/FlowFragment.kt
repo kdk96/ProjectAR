@@ -1,12 +1,9 @@
 package com.kdk96.common.ui
 
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentTransaction
 import com.kdk96.common.R
 import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
-import ru.terrakok.cicerone.commands.Command
 
 abstract class FlowFragment : BaseFragment() {
     override val layoutRes = R.layout.layout_container
@@ -19,14 +16,6 @@ abstract class FlowFragment : BaseFragment() {
     protected val navigator: Navigator by lazy {
         object : SupportAppNavigator(this.activity, childFragmentManager, R.id.container) {
             override fun activityBack() = onExit()
-            override fun setupFragmentTransaction(
-                    command: Command?,
-                    currentFragment: Fragment?,
-                    nextFragment: Fragment?,
-                    fragmentTransaction: FragmentTransaction
-            ) {
-                fragmentTransaction.setReorderingAllowed(true)
-            }
         }
     }
 
