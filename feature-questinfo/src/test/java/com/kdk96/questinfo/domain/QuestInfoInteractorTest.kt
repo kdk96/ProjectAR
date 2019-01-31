@@ -76,7 +76,7 @@ class QuestInfoInteractorTest {
 
     @Test
     fun cancel_participation_success() {
-        questInfoInteractor.playerId = PLAYER_ID
+        questInfoInteractor.initPlayerId(PLAYER_ID)
         `when`(questInfoRepository.cancelParticipationInQuest(PLAYER_ID)).thenReturn(Completable.complete())
         val testObserver = questInfoInteractor.cancelParticipation().test()
         testObserver.assertNoErrors()
@@ -85,7 +85,7 @@ class QuestInfoInteractorTest {
 
     @Test
     fun cancel_participation_failure() {
-        questInfoInteractor.playerId = PLAYER_ID
+        questInfoInteractor.initPlayerId(PLAYER_ID)
         `when`(questInfoRepository.cancelParticipationInQuest(PLAYER_ID)).thenReturn(Completable.error(IOException()))
         val testObserver = questInfoInteractor.cancelParticipation().test()
         testObserver.assertError(IOException::class.java)

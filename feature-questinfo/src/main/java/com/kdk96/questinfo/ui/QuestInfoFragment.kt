@@ -33,16 +33,15 @@ import javax.inject.Inject
 
 class QuestInfoFragment : BaseFragment(), QuestInfoView, CancelParticipationDialogFragment.CancelConfirmedListener {
     companion object {
+        private const val ARG_QUEST_ID = "quest id argument"
+        fun newInstance(id: String) = QuestInfoFragment().apply {
+            arguments = Bundle().apply { putString(ARG_QUEST_ID, id) }
+        }
+
         const val ACCESS_FINE_LOCATION_REQUEST = 101
     }
 
     override val layoutRes = R.layout.fragment_quest_info
-
-    init {
-        componentBuilder = {
-            DaggerQuestInfoComponent.builder().questInfoDependencies(findComponentDependencies()).build()
-        }
-    }
 
     @Inject
     @InjectPresenter
@@ -69,6 +68,12 @@ class QuestInfoFragment : BaseFragment(), QuestInfoView, CancelParticipationDial
     private val timeFormatter by lazy { DateTimeFormatter.ofPattern("HH:mm, d MMM") }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        componentBuilder = {
+            DaggerQuestInfoComponent.builder()
+                    .questId(arguments!!.getString(ARG_QUEST_ID)!!)
+                    .questInfoDependencies(findComponentDependencies())
+                    .build()
+        }
         getComponent<QuestInfoComponent>().inject(this)
         super.onCreate(savedInstanceState)
         permissionHelper.listener = object : PermissionHelper.RequestPermissionsResultListener {

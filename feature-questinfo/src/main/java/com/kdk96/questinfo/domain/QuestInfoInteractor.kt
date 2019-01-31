@@ -5,17 +5,25 @@ import com.kdk96.questinfo.data.repository.QuestInfoRepository
 typealias LatLngPair = Pair<Double, Double>
 
 class QuestInfoInteractor(
-        private val questId: String,
+        val questId: String,
         private val questInfoRepository: QuestInfoRepository
 ) {
-    var playerId: String? = null
+    private var playerId: String? = null
+
+    fun initPlayerId(playerId: String?) {
+        this.playerId = playerId
+    }
+
+    fun clearPlayerId() {
+        playerId = null
+    }
 
     fun getQuestInfo() = questInfoRepository.getQuestInfo(questId)
-            .doOnSuccess { playerId = it.playerId }
+            .doOnSuccess { initPlayerId(it.playerId) }
 
     fun participateInQuest() = questInfoRepository.participateInQuest(questId)
-            .doOnSuccess { playerId = it.playerId }
+            .doOnSuccess { initPlayerId(it.playerId) }
 
     fun cancelParticipation() = questInfoRepository.cancelParticipationInQuest(playerId!!)
-            .doOnComplete { playerId = null }
+            .doOnComplete { clearPlayerId() }
 }

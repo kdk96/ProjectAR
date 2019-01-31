@@ -20,6 +20,9 @@ import com.kdk96.projectar.ui.AppActivity
 import com.kdk96.projectar.ui.RootScreens
 import com.kdk96.quest.di.QuestFlowDependencies
 import com.kdk96.quest.ui.QuestFlowFragment
+import com.kdk96.questinfo.di.QuestInfoDependencies
+import com.kdk96.questinfo.presentation.QuestInfoReachableScreens
+import com.kdk96.questinfo.ui.QuestInfoFragment
 import com.kdk96.settings.domain.AccountInteractor
 import dagger.*
 import dagger.multibindings.IntoMap
@@ -43,7 +46,7 @@ import javax.inject.Singleton
     DatabaseModule::class,
     ServerApiModule::class
 ])
-interface AppComponent : AuthFlowDependencies, MainFlowDependencies, QuestFlowDependencies {
+interface AppComponent : AuthFlowDependencies, MainFlowDependencies, QuestInfoDependencies, QuestFlowDependencies {
     @Component.Builder
     interface Builder {
         @BindsInstance
@@ -110,11 +113,20 @@ object NavigationModule {
     @JvmStatic
     @Singleton
     fun provideMainFlowReachableScreens() = object : MainFlowReachableScreens {
-        override fun questFlow(id: String) = object : SupportAppScreen() {
-            override fun getFragment() = QuestFlowFragment.newInstance(id)
+        override fun questInfo(questId: String) = object : SupportAppScreen() {
+            override fun getFragment() = QuestInfoFragment.newInstance(questId)
         }
 
         override fun authFlow() = RootScreens.AuthFlow
+    }
+
+    @Provides
+    @JvmStatic
+    @Singleton
+    fun provideQuestInfoReachableScreens() = object : QuestInfoReachableScreens {
+        override fun questFlow(questId: String) = object : SupportAppScreen() {
+            override fun getFragment() = QuestFlowFragment.newInstance(questId)
+        }
     }
 }
 
@@ -129,6 +141,11 @@ interface ComponentDependenciesModule {
     @IntoMap
     @ComponentDependenciesKey(MainFlowDependencies::class)
     fun provideMainFlowDependencies(appComponent: AppComponent): ComponentDependencies
+
+    @Binds
+    @IntoMap
+    @ComponentDependenciesKey(QuestInfoDependencies::class)
+    fun provideQuestInfoDependencies(appComponent: AppComponent): ComponentDependencies
 
     @Binds
     @IntoMap

@@ -38,7 +38,7 @@ class QuestsPresenter(
             })
             .connect()
 
-    fun onQuestClick(id: String) = router.startFlow(screens.questFlow(id))
+    fun onQuestClick(id: String) = router.startFlow(screens.questInfo(id))
 
     fun onBackPressed() = router.exit()
 }
