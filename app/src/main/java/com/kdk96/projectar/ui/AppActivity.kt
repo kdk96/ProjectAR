@@ -1,6 +1,8 @@
 package com.kdk96.projectar.ui
 
 import android.os.Bundle
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentTransaction
 import com.arellomobile.mvp.MvpAppCompatActivity
 import com.kdk96.common.ui.BaseFragment
 import com.kdk96.projectar.App
@@ -9,6 +11,7 @@ import com.kdk96.projectar.presentation.Launcher
 import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
+import ru.terrakok.cicerone.commands.Command
 import javax.inject.Inject
 
 class AppActivity : MvpAppCompatActivity() {
@@ -17,7 +20,16 @@ class AppActivity : MvpAppCompatActivity() {
     @Inject
     lateinit var launcher: Launcher
 
-    private val navigator: Navigator = object : SupportAppNavigator(this, supportFragmentManager, R.id.container) {}
+    private val navigator: Navigator = object : SupportAppNavigator(this, supportFragmentManager, R.id.container) {
+        override fun setupFragmentTransaction(
+                command: Command?,
+                currentFragment: Fragment?,
+                nextFragment: Fragment?,
+                fragmentTransaction: FragmentTransaction
+        ) {
+            fragmentTransaction.setReorderingAllowed(true)
+        }
+    }
 
     private val currentFragment: BaseFragment?
         get() = supportFragmentManager.findFragmentById(R.id.container) as? BaseFragment

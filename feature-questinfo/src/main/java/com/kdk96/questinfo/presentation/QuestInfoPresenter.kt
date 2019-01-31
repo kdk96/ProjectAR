@@ -2,7 +2,6 @@ package com.kdk96.questinfo.presentation
 
 import com.arellomobile.mvp.InjectViewState
 import com.kdk96.common.presentation.BasePresenter
-import com.kdk96.common.presentation.FlowRouter
 import com.kdk96.questinfo.domain.LatLngPair
 import com.kdk96.questinfo.domain.QuestInfoInteractor
 import com.kdk96.questinfo.domain.entity.QuestInfo
@@ -10,13 +9,15 @@ import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.BehaviorSubject
+import ru.terrakok.cicerone.Router
 import java.util.concurrent.TimeUnit
 
 @InjectViewState
 class QuestInfoPresenter(
-        private val router: FlowRouter,
+        private val router: Router,
         private val interactor: QuestInfoInteractor,
-        private val mainThreadScheduler: Scheduler
+        private val mainThreadScheduler: Scheduler,
+        private val screens: QuestInfoReachableScreens
 ) : BasePresenter<QuestInfoView>() {
     private val startPointSubject = BehaviorSubject.create<LatLngPair>()
     private var timerDisposable: Disposable? = null
@@ -67,9 +68,7 @@ class QuestInfoPresenter(
             }, Throwable::printStackTrace)
             .connect()
 
-    fun onStartClick() {
-
-    }
+    fun onStartClick() = router.replaceScreen(screens.questFlow(interactor.questId))
 
     fun onRemainingTimeClick() = viewState.showCancelConfirmationDialog()
 

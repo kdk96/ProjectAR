@@ -1,35 +1,25 @@
 package com.kdk96.quest.di
 
-import com.kdk96.common.di.*
+import com.kdk96.common.di.DaggerComponent
+import com.kdk96.common.di.FlowNavigationModule
+import com.kdk96.common.di.PerFlow
 import com.kdk96.quest.ui.QuestFlowFragment
-import com.kdk96.questinfo.di.QuestInfoDependencies
-import dagger.Binds
 import dagger.BindsInstance
 import dagger.Component
-import dagger.Module
-import dagger.multibindings.IntoMap
 
 @PerFlow
 @Component(
-        modules = [FlowNavigationModule::class, ChildDependenciesModule::class],
+        modules = [FlowNavigationModule::class],
         dependencies = [QuestFlowDependencies::class]
 )
-interface QuestFlowComponent : DaggerComponent, QuestInfoDependencies {
+interface QuestFlowComponent : DaggerComponent {
     @Component.Builder
     interface Builder {
         @BindsInstance
-        fun id(id: String): Builder
+        fun questId(questId: String): Builder
         fun questFlowDependencies(questFlowDependencies: QuestFlowDependencies): Builder
         fun build(): QuestFlowComponent
     }
 
     fun inject(questFlowFragment: QuestFlowFragment)
-}
-
-@Module
-interface ChildDependenciesModule {
-    @Binds
-    @IntoMap
-    @ComponentDependenciesKey(QuestInfoDependencies::class)
-    fun provideQuestInfoDependencies(questFlowComponent: QuestFlowComponent): ComponentDependencies
 }

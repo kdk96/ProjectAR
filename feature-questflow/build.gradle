@@ -30,6 +30,4 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxjava:$rxjava_version"
 
     implementation project(':common')
-
-    implementation project(':feature-questinfo')
 }
