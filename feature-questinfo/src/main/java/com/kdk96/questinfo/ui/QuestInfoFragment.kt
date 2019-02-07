@@ -52,14 +52,6 @@ class QuestInfoFragment : BaseFragment(), QuestInfoView, CancelParticipationDial
 
     private var map: GoogleMap? = null
     private val permissionHelper = PermissionHelper()
-    private val isLocationPermissionGranted: Boolean
-        get() = permissionHelper.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                ACCESS_FINE_LOCATION_REQUEST,
-                R.string.access_fine_location_permission_rationale_dialog_message
-        )
-
     private val onParticipateClickListener: (view: View) -> Unit = { presenter.onParticipateClick() }
     private val onStartClickListener: (view: View) -> Unit = { presenter.onStartClick() }
     private val onWaitClickListener: (view: View) -> Unit = { presenter.onRemainingTimeClick() }
@@ -91,12 +83,16 @@ class QuestInfoFragment : BaseFragment(), QuestInfoView, CancelParticipationDial
         mapView.getMapAsync {
             this.map = it
             it.setPadding(0, 0, 0, BottomSheetBehavior.from(bottomSheet).peekHeight)
-            if (isLocationPermissionGranted) {
-                enableMyLocation()
-            }
             presenter.onMapReady()
         }
     }
+
+    override fun showUserLocation() = permissionHelper.doActionWithCheckPermissions(
+            this,
+            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+            ACCESS_FINE_LOCATION_REQUEST,
+            R.string.access_fine_location_permission_rationale_dialog_message
+    )
 
     @SuppressLint("MissingPermission")
     private fun enableMyLocation() {

@@ -8,6 +8,7 @@ import android.support.v7.app.AlertDialog
 
 class RationaleDialog : DialogFragment() {
     companion object {
+        const val TAG = "rationale dialog"
         private const val ARG_MESSAGE_ID = "arg message"
         private const val ARG_PERMISSIONS = "arg permissions"
         private const val ARG_REQUEST_CODE = "arg request code"

@@ -90,14 +90,12 @@ class SettingsFragment : BaseFragment(), SettingsView {
                 .create().show()
     }
 
-    override fun openCamera() {
-        if (permissionHelper.requestPermissions(this,
-                        arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                        TAKE_PHOTO_WRITE_EXTERNAL_STORAGE_REQUEST,
-                        R.string.write_external_storage_permission_rationale_dialog_message)) {
-            takePhoto()
-        }
-    }
+    override fun openCamera() = permissionHelper.doActionWithCheckPermissions(
+            this,
+            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+            TAKE_PHOTO_WRITE_EXTERNAL_STORAGE_REQUEST,
+            R.string.write_external_storage_permission_rationale_dialog_message
+    )
 
     private fun takePhoto() {
         val takePhotoIntent = avatarFileProcessor.getTakePhotoIntent()
@@ -105,14 +103,12 @@ class SettingsFragment : BaseFragment(), SettingsView {
                 ?: presenter.onCameraOpenFailure()
     }
 
-    override fun openGallery() {
-        if (permissionHelper.requestPermissions(this,
-                        arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                        PICK_IMAGE_WRITE_EXTERNAL_STORAGE_REQUEST,
-                        R.string.write_external_storage_permission_rationale_dialog_message)) {
-            pickImageFromGallery()
-        }
-    }
+    override fun openGallery() = permissionHelper.doActionWithCheckPermissions(
+            this,
+            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+            PICK_IMAGE_WRITE_EXTERNAL_STORAGE_REQUEST,
+            R.string.write_external_storage_permission_rationale_dialog_message
+    )
 
     private fun pickImageFromGallery() = startActivityForResult(
             Intent(Intent.ACTION_PICK).apply { type = "image/*" },
