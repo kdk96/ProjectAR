@@ -59,7 +59,10 @@ class QuestInfoPresenter(
         }
     }
 
-    fun onMapReady() = startPointSubject.subscribe { viewState.showStartPoint(it) }.connect()
+    fun onMapReady() {
+        startPointSubject.subscribe { viewState.showStartPoint(it) }.connect()
+        viewState.showUserLocation()
+    }
 
     fun onParticipateClick() = interactor.participateInQuest()
             .observeOn(mainThreadScheduler)

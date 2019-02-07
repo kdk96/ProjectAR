@@ -17,6 +17,7 @@ interface QuestInfoView : MvpView {
     fun showStartPoint(latLngPair: LatLngPair)
     fun changeButtonState(state: ButtonState)
     fun showRemainingTime(remainingTime: Long)
+    fun showUserLocation()
     @StateStrategyType(OneExecutionStateStrategy::class)
     fun showCancelConfirmationDialog()
 }
