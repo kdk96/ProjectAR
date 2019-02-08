@@ -35,6 +35,19 @@
         app:behavior_peekHeight="@dimen/peek_height"
         app:layout_behavior="@string/bottom_sheet_behavior">
 
-        <include layout="@layout/content_bottom_sheet" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/peek_height">
+
+            <include
+                android:id="@+id/contentBottomSheet"
+                layout="@layout/content_bottom_sheet" />
+
+            <include
+                android:id="@+id/layoutNetworkError"
+                layout="@layout/layout_network_error"
+                android:visibility="gone" />
+        </FrameLayout>
     </android.support.v4.widget.NestedScrollView>
 </android.support.design.widget.CoordinatorLayout>

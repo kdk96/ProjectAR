@@ -1,6 +1,7 @@
 package com.kdk96.questinfo.domain
 
 import com.kdk96.questinfo.data.repository.QuestInfoRepository
+import com.kdk96.questinfo.domain.entity.QuestInfo
 
 typealias LatLngPair = Pair<Double, Double>
 
@@ -8,22 +9,14 @@ class QuestInfoInteractor(
         val questId: String,
         private val questInfoRepository: QuestInfoRepository
 ) {
-    private var playerId: String? = null
-
-    fun initPlayerId(playerId: String?) {
-        this.playerId = playerId
-    }
-
-    fun clearPlayerId() {
-        playerId = null
-    }
+    lateinit var questInfo: QuestInfo
 
     fun getQuestInfo() = questInfoRepository.getQuestInfo(questId)
-            .doOnSuccess { initPlayerId(it.playerId) }
+            .doOnSuccess { this.questInfo = it }
 
     fun participateInQuest() = questInfoRepository.participateInQuest(questId)
-            .doOnSuccess { initPlayerId(it.playerId) }
+            .doOnSuccess { this.questInfo = it }
 
-    fun cancelParticipation() = questInfoRepository.cancelParticipationInQuest(playerId!!)
-            .doOnComplete { clearPlayerId() }
+    fun cancelParticipation() = questInfoRepository.cancelParticipationInQuest(questInfo.playerId!!)
+            .doOnSuccess { this.questInfo = it }
 }

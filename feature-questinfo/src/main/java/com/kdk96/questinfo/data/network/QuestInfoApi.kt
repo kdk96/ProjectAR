@@ -1,7 +1,6 @@
 package com.kdk96.questinfo.data.network
 
 import com.kdk96.questinfo.domain.entity.QuestInfo
-import io.reactivex.Completable
 import io.reactivex.Single
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -16,5 +15,5 @@ interface QuestInfoApi {
     fun participateInQuest(@Path("questId") questId: String): Single<QuestInfo>
 
     @DELETE("players/{playerId}")
-    fun cancelParticipation(@Path("playerId") playerId: String): Completable
+    fun cancelParticipation(@Path("playerId") playerId: String): Single<QuestInfo>
 }

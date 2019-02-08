@@ -3,7 +3,6 @@ package com.kdk96.questinfo.domain
 import com.kdk96.questinfo.data.repository.QuestInfoRepository
 import com.kdk96.questinfo.domain.entity.Prize
 import com.kdk96.questinfo.domain.entity.QuestInfo
-import io.reactivex.Completable
 import io.reactivex.Single
 import org.junit.Before
 import org.junit.Test
@@ -30,6 +29,22 @@ class QuestInfoInteractorTest {
                         Prize("prize2", "prize 2", 2)
                 ),
                 PLAYER_ID
+        )
+        val QUEST_INFO_WITH_NULL_PLAYER_ID = QuestInfo(
+                QUEST_ID,
+                "quest",
+                "nice quest",
+                1545670800000,
+                "comp id",
+                "best company",
+                "logo url",
+                56.474244,
+                84.951031,
+                listOf(
+                        Prize("prize1", "prize 1", 1),
+                        Prize("prize2", "prize 2", 2)
+                ),
+                null
         )
     }
 
@@ -76,18 +91,19 @@ class QuestInfoInteractorTest {
 
     @Test
     fun cancel_participation_success() {
-        questInfoInteractor.initPlayerId(PLAYER_ID)
-        `when`(questInfoRepository.cancelParticipationInQuest(PLAYER_ID)).thenReturn(Completable.complete())
+        questInfoInteractor.questInfo = QUEST_INFO
+        `when`(questInfoRepository.cancelParticipationInQuest(PLAYER_ID)).thenReturn(Single.just(QUEST_INFO_WITH_NULL_PLAYER_ID))
         val testObserver = questInfoInteractor.cancelParticipation().test()
         testObserver.assertNoErrors()
-                .assertComplete()
+                .assertValue(QUEST_INFO_WITH_NULL_PLAYER_ID)
     }
 
     @Test
     fun cancel_participation_failure() {
-        questInfoInteractor.initPlayerId(PLAYER_ID)
-        `when`(questInfoRepository.cancelParticipationInQuest(PLAYER_ID)).thenReturn(Completable.error(IOException()))
+        questInfoInteractor.questInfo = QUEST_INFO
+        `when`(questInfoRepository.cancelParticipationInQuest(PLAYER_ID)).thenReturn(Single.error(IOException()))
         val testObserver = questInfoInteractor.cancelParticipation().test()
-        testObserver.assertError(IOException::class.java)
+        testObserver.assertNoValues()
+                .assertError(IOException::class.java)
     }
 }

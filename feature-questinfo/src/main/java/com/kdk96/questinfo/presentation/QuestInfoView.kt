@@ -14,10 +14,14 @@ enum class ButtonState {
 @StateStrategyType(AddToEndSingleStrategy::class)
 interface QuestInfoView : MvpView {
     fun showInfo(questInfo: QuestInfo)
+    fun showNetworkError()
     fun showStartPoint(latLngPair: LatLngPair)
     fun changeButtonState(state: ButtonState)
     fun showRemainingTime(remainingTime: Long)
+    @StateStrategyType(OneExecutionStateStrategy::class)
     fun showUserLocation()
     @StateStrategyType(OneExecutionStateStrategy::class)
     fun showCancelConfirmationDialog()
+    @StateStrategyType(OneExecutionStateStrategy::class)
+    fun showError(resId: Int)
 }
