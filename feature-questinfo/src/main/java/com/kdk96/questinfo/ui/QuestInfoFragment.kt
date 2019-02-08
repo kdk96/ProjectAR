@@ -2,8 +2,11 @@ package com.kdk96.questinfo.ui
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.design.widget.BottomSheetBehavior
+import android.support.design.widget.Snackbar
+import android.support.v4.content.ContextCompat
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
@@ -25,6 +28,7 @@ import com.kdk96.questinfo.presentation.QuestInfoPresenter
 import com.kdk96.questinfo.presentation.QuestInfoView
 import kotlinx.android.synthetic.main.content_bottom_sheet.*
 import kotlinx.android.synthetic.main.fragment_quest_info.*
+import kotlinx.android.synthetic.main.layout_network_error.*
 import org.threeten.bp.Instant
 import org.threeten.bp.ZoneId
 import org.threeten.bp.format.DateTimeFormatter
@@ -52,12 +56,19 @@ class QuestInfoFragment : BaseFragment(), QuestInfoView, CancelParticipationDial
 
     private var map: GoogleMap? = null
     private val permissionHelper = PermissionHelper()
+
     private val onParticipateClickListener: (view: View) -> Unit = { presenter.onParticipateClick() }
     private val onStartClickListener: (view: View) -> Unit = { presenter.onStartClick() }
     private val onWaitClickListener: (view: View) -> Unit = { presenter.onRemainingTimeClick() }
 
     private val waitButtonString by lazy { getString(R.string.quest_will_start_in) }
     private val timeFormatter by lazy { DateTimeFormatter.ofPattern("HH:mm, d MMM") }
+
+    private val isLocationPermissionGranted: Boolean
+        get() = ContextCompat.checkSelfPermission(
+                context!!,
+                Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
 
     override fun onCreate(savedInstanceState: Bundle?) {
         componentBuilder = {
@@ -78,12 +89,16 @@ class QuestInfoFragment : BaseFragment(), QuestInfoView, CancelParticipationDial
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        retryButton.setOnClickListener { presenter.onRetryClick() }
         toolbar.setNavigationOnClickListener { presenter.onBackPressed() }
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync {
             this.map = it
             it.setPadding(0, 0, 0, BottomSheetBehavior.from(bottomSheet).peekHeight)
             presenter.onMapReady()
+            if (isLocationPermissionGranted) {
+                enableMyLocation()
+            }
         }
     }
 
@@ -100,6 +115,7 @@ class QuestInfoFragment : BaseFragment(), QuestInfoView, CancelParticipationDial
     }
 
     override fun showInfo(questInfo: QuestInfo) {
+        showContentBottomSheet()
         toolbar.title = questInfo.title
         questDescriptionTV.text = questInfo.description
         GlideApp.with(this)
@@ -113,6 +129,12 @@ class QuestInfoFragment : BaseFragment(), QuestInfoView, CancelParticipationDial
         prizesTV.text = prizesToString(questInfo.prizes)
     }
 
+    private fun showContentBottomSheet() {
+        layoutNetworkError.visibility = View.GONE
+        contentBottomSheet.visibility = View.VISIBLE
+        BottomSheetBehavior.from(bottomSheet).state = BottomSheetBehavior.STATE_COLLAPSED
+    }
+
     private fun prizesToString(prizes: List<Prize>): String {
         val stringBuilder = StringBuilder()
         stringBuilder.appendln(getString(R.string.prizes))
@@ -123,6 +145,11 @@ class QuestInfoFragment : BaseFragment(), QuestInfoView, CancelParticipationDial
         }
         stringBuilder.append("${getString(R.string.others)}: ${prizes.last().description}")
         return stringBuilder.toString()
+    }
+
+    override fun showNetworkError() {
+        layoutNetworkError.visibility = View.VISIBLE
+        contentBottomSheet.visibility = View.GONE
     }
 
     override fun showStartPoint(latLngPair: Pair<Double, Double>) {
@@ -183,6 +210,10 @@ class QuestInfoFragment : BaseFragment(), QuestInfoView, CancelParticipationDial
 
     override fun onCancelConfirmed() = presenter.onCancelConfirmed()
 
+    override fun showError(resId: Int) {
+        Snackbar.make(view!!, resId, Snackbar.LENGTH_LONG).show()
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         mapView.onSaveInstanceState(outState)
@@ -201,9 +232,14 @@ class QuestInfoFragment : BaseFragment(), QuestInfoView, CancelParticipationDial
     override fun onResume() {
         super.onResume()
         mapView.onResume()
+        if (isLocationPermissionGranted) {
+            enableMyLocation()
+        }
+        presenter.onResume()
     }
 
     override fun onPause() {
+        presenter.onPause()
         mapView.onPause()
         super.onPause()
     }
@@ -221,6 +257,7 @@ class QuestInfoFragment : BaseFragment(), QuestInfoView, CancelParticipationDial
     override fun onBackPressed() = presenter.onBackPressed()
 
     override fun onDestroyView() {
+        presenter.onMapDestroy()
         mapView.onDestroy()
         super.onDestroyView()
     }
