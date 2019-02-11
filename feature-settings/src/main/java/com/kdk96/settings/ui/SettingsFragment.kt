@@ -13,6 +13,7 @@ import com.kdk96.common.ui.BaseFragment
 import com.kdk96.common.ui.HasDrawerToggle
 import com.kdk96.glide.GlideApp
 import com.kdk96.permission.PermissionHelper
+import com.kdk96.permission.showOnNeverAskAgainSnackbar
 import com.kdk96.settings.R
 import com.kdk96.settings.data.storage.AvatarFileProcessor
 import com.kdk96.settings.di.DaggerSettingsComponent
@@ -58,6 +59,10 @@ class SettingsFragment : BaseFragment(), SettingsView {
                     TAKE_PHOTO_WRITE_EXTERNAL_STORAGE_REQUEST -> takePhoto()
                     PICK_IMAGE_WRITE_EXTERNAL_STORAGE_REQUEST -> pickImageFromGallery()
                 }
+            }
+
+            override fun onNeverAskAgain(requestCode: Int, permissionDeniedMessageId: Int) {
+                showOnNeverAskAgainSnackbar(permissionDeniedMessageId)
             }
         }
     }

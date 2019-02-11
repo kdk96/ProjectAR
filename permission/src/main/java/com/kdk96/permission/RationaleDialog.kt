@@ -7,6 +7,10 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 
 class RationaleDialog : DialogFragment() {
+    interface CancelListener {
+        fun onRationaleDialogCancel(requestCode: Int)
+    }
+
     companion object {
         const val TAG = "rationale dialog"
         private const val ARG_MESSAGE_ID = "arg message"
@@ -27,6 +31,7 @@ class RationaleDialog : DialogFragment() {
             return RationaleDialog().apply {
                 setTargetFragment(fragment, 1)
                 setArguments(arguments)
+                isCancelable = false
             }
         }
     }
@@ -40,7 +45,9 @@ class RationaleDialog : DialogFragment() {
                 .setPositiveButton(android.R.string.ok) { _, _ ->
                     targetFragment!!.requestPermissions(permissions, requestCode)
                 }
-                .setNegativeButton(android.R.string.no, null)
+                .setNegativeButton(android.R.string.no) { _, _ ->
+                    (targetFragment as? CancelListener)?.onRationaleDialogCancel(requestCode)
+                }
                 .create()
     }
 }

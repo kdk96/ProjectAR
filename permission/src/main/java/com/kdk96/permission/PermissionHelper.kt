@@ -13,7 +13,7 @@ import android.support.v4.content.ContextCompat
 class PermissionHelper {
     interface RequestPermissionsResultListener {
         fun onPermissionGranted(requestCode: Int)
-        fun onPermissionDenied(requestCode: Int) = Unit
+        fun onNeverAskAgain(requestCode: Int, permissionDeniedMessageId: Int)
     }
 
     var listener: RequestPermissionsResultListener? = null
@@ -88,15 +88,20 @@ class PermissionHelper {
                         requestCode
                 )
             } else {
-                listener?.onPermissionDenied(requestCode)
-                val intent = Intent(
-                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                        Uri.fromParts("package", fragment.context!!.packageName, null)
-                ).apply { addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
-                Snackbar.make(fragment.view!!, onPermissionsDeniedMessages.getValue(requestCode), Snackbar.LENGTH_LONG)
-                        .setAction(R.string.settings) { fragment.startActivity(intent) }
-                        .show()
+                listener?.onNeverAskAgain(requestCode, onPermissionsDeniedMessages.getValue(requestCode))
             }
         } else listener?.onPermissionGranted(requestCode)
     }
+}
+
+val Fragment.settingsIntent
+    get() = Intent(
+            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+            Uri.fromParts("package", context!!.packageName, null)
+    ).apply { addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
+
+fun Fragment.showOnNeverAskAgainSnackbar(messageResId: Int) {
+    Snackbar.make(view!!, messageResId, Snackbar.LENGTH_LONG)
+            .setAction(R.string.settings) { startActivity(settingsIntent) }
+            .show()
 }

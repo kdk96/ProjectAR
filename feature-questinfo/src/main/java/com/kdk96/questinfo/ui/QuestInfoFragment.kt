@@ -18,6 +18,7 @@ import com.kdk96.common.di.findComponentDependencies
 import com.kdk96.common.ui.BaseFragment
 import com.kdk96.glide.GlideApp
 import com.kdk96.permission.PermissionHelper
+import com.kdk96.permission.showOnNeverAskAgainSnackbar
 import com.kdk96.questinfo.R
 import com.kdk96.questinfo.di.DaggerQuestInfoComponent
 import com.kdk96.questinfo.di.QuestInfoComponent
@@ -83,6 +84,10 @@ class QuestInfoFragment : BaseFragment(), QuestInfoView, CancelParticipationDial
             override fun onPermissionGranted(requestCode: Int) = when (requestCode) {
                 ACCESS_FINE_LOCATION_REQUEST -> enableMyLocation()
                 else -> Unit
+            }
+
+            override fun onNeverAskAgain(requestCode: Int, permissionDeniedMessageId: Int) {
+                showOnNeverAskAgainSnackbar(permissionDeniedMessageId)
             }
         }
     }
