@@ -7,13 +7,10 @@ enum class FieldName {
 abstract class FieldException(val fields: Set<FieldName>) : RuntimeException(
         StringBuilder().apply {
             append("fields: ")
-            fields.forEachIndexed { index, fieldName ->
-                if (index == fields.size - 1) {
-                    append(fieldName.name)
-                } else {
-                    append("${fieldName.name}, ")
-                }
+            for (field in fields) {
+                append("${field.name}, ")
             }
+            delete(length - 2, length)
         }.toString()
 )
 

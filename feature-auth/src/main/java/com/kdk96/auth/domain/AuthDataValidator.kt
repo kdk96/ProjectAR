@@ -1,28 +1,42 @@
 package com.kdk96.auth.domain
 
+import com.kdk96.common.di.PerFlow
+import java.util.*
 import java.util.regex.Pattern
+import javax.inject.Inject
 
-class AuthDataValidator {
+private typealias ValidateFunction = ((fieldSet: MutableSet<FieldName>) -> Unit)
+
+@PerFlow
+class AuthDataValidator @Inject constructor() {
     companion object {
         private val EMAIL_PATTERN = Pattern.compile("^.+@.+\\..+$")
         private val PASSWORD_PATTERN = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$")
     }
 
-    fun validateSignInData(email: String, password: String? = null) {
-        val fieldSet = mutableSetOf<FieldName>()
-        checkOnEmptySignInData(fieldSet, email, password)
-        if (fieldSet.isNotEmpty()) throw EmptyFieldException(fieldSet)
-        validateEmail(fieldSet, email)
-        if (fieldSet.isNotEmpty()) throw InvalidFieldException(fieldSet)
-    }
+    fun validateSignInData(email: String, password: String? = null) = validateData(
+            { checkOnEmptySignInData(it, email, password) },
+            { validateEmail(it, email) }
+    )
 
-    fun validateSignUpData(email: String, name: String, password: String, passwordConfirmation: String) {
-        val fieldSet = mutableSetOf<FieldName>()
-        checkOnEmptySignInData(fieldSet, email, password)
-        checkOnEmptySignUpData(fieldSet, name, passwordConfirmation)
+    fun validateSignUpData(
+            email: String,
+            name: String,
+            password: String,
+            passwordConfirmation: String
+    ) = validateData({
+        checkOnEmptySignInData(it, email, password)
+        checkOnEmptySignUpData(it, name, passwordConfirmation)
+    }, {
+        validateEmail(it, email)
+        validatePassword(it, password, passwordConfirmation)
+    })
+
+    private inline fun validateData(checkEmpty: ValidateFunction, validateData: ValidateFunction) {
+        val fieldSet = EnumSet.noneOf(FieldName::class.java)
+        checkEmpty(fieldSet)
         if (fieldSet.isNotEmpty()) throw EmptyFieldException(fieldSet)
-        validateEmail(fieldSet, email)
-        validatePassword(fieldSet, password, passwordConfirmation)
+        validateData(fieldSet)
         if (fieldSet.isNotEmpty()) throw InvalidFieldException(fieldSet)
     }
 
