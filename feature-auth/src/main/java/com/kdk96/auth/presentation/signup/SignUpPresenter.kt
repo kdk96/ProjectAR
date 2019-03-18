@@ -4,19 +4,17 @@ import com.arellomobile.mvp.InjectViewState
 import com.kdk96.auth.domain.*
 import com.kdk96.auth.screen.R
 import com.kdk96.auth.ui.AuthFlowReachableScreens
-import com.kdk96.common.di.Rx
 import com.kdk96.common.presentation.BasePresenter
 import com.kdk96.common.presentation.FlowRouter
 import io.reactivex.Scheduler
 import java.io.IOException
-import javax.inject.Inject
 
 @InjectViewState
-class SignUpPresenter @Inject constructor(
+class SignUpPresenter(
         private var email: String,
         private val interactor: AuthInteractor,
         private val router: FlowRouter,
-        @Rx.MainThread private val mainThreadScheduler: Scheduler,
+        private val mainThreadScheduler: Scheduler,
         private val screens: AuthFlowReachableScreens
 ) : BasePresenter<SignUpView>() {
     private var name = ""

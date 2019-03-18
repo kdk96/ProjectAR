@@ -1,6 +1,5 @@
 package com.kdk96.auth.domain
 
-import com.kdk96.auth.data.repository.AuthRepository
 import io.reactivex.Completable
 import org.junit.Before
 import org.junit.Rule
@@ -27,7 +26,7 @@ class AuthInteractorTest {
     @Before
     fun setUp() {
         authRepository = mock(AuthRepository::class.java)
-        authInteractor = AuthInteractor(AuthDataValidator(), authRepository)
+        authInteractor = AuthInteractorImpl(AuthDataValidator(), authRepository)
     }
 
     @Test
