@@ -52,6 +52,6 @@ dependencies {
     implementation project(':permission')
 
     testImplementation "junit:junit:$junit_version"
-    testImplementation "org.mockito:mockito-inline:$mockito_version"
+    testImplementation "org.mockito:mockito-core:$mockito_version"
 
 }

@@ -4,15 +4,14 @@ import com.kdk96.common.di.DaggerComponent
 import com.kdk96.common.di.PerFragment
 import com.kdk96.common.di.Rx
 import com.kdk96.questinfo.data.network.QuestInfoApi
-import com.kdk96.questinfo.data.repository.QuestInfoRepository
+import com.kdk96.questinfo.data.repository.QuestInfoRepositoryImpl
 import com.kdk96.questinfo.domain.QuestInfoInteractor
+import com.kdk96.questinfo.domain.QuestInfoInteractorImpl
+import com.kdk96.questinfo.domain.QuestInfoRepository
 import com.kdk96.questinfo.presentation.QuestInfoPresenter
 import com.kdk96.questinfo.presentation.QuestInfoReachableScreens
 import com.kdk96.questinfo.ui.QuestInfoFragment
-import dagger.BindsInstance
-import dagger.Component
-import dagger.Module
-import dagger.Provides
+import dagger.*
 import io.reactivex.Scheduler
 import retrofit2.Retrofit
 import ru.terrakok.cicerone.Router
@@ -32,31 +31,30 @@ interface QuestInfoComponent : DaggerComponent {
 }
 
 @Module
-object QuestInfoModule {
-    @Provides
-    @JvmStatic
-    @PerFragment
-    fun provideApi(retrofit: Retrofit) = retrofit.create(QuestInfoApi::class.java)
+abstract class QuestInfoModule {
+    @Module
+    companion object {
+        @Provides
+        @JvmStatic
+        @PerFragment
+        fun provideApi(retrofit: Retrofit) = retrofit.create(QuestInfoApi::class.java)
 
-    @Provides
-    @JvmStatic
-    @PerFragment
-    fun provideQuestInfoRepository(api: QuestInfoApi, @Rx.Io ioScheduler: Scheduler) =
-            QuestInfoRepository(api, ioScheduler)
+        @Provides
+        @JvmStatic
+        @PerFragment
+        fun provideQuestInfoPresenter(
+                router: Router,
+                questInfoInteractor: QuestInfoInteractor,
+                @Rx.MainThread mainThreadScheduler: Scheduler,
+                screens: QuestInfoReachableScreens
+        ) = QuestInfoPresenter(router, questInfoInteractor, mainThreadScheduler, screens)
+    }
 
-    @Provides
-    @JvmStatic
+    @Binds
     @PerFragment
-    fun provideQuestInfoInteractor(questId: String, questInfoRepository: QuestInfoRepository) =
-            QuestInfoInteractor(questId, questInfoRepository)
+    abstract fun provideQuestInfoRepository(questInfoRepositoryImpl: QuestInfoRepositoryImpl): QuestInfoRepository
 
-    @Provides
-    @JvmStatic
+    @Binds
     @PerFragment
-    fun provideQuestInfoPresenter(
-            router: Router,
-            questInfoInteractor: QuestInfoInteractor,
-            @Rx.MainThread mainThreadScheduler: Scheduler,
-            screens: QuestInfoReachableScreens
-    ) = QuestInfoPresenter(router, questInfoInteractor, mainThreadScheduler, screens)
+    abstract fun provideQuestInfoInteractor(questInfoInteractorImpl: QuestInfoInteractorImpl): QuestInfoInteractor
 }
