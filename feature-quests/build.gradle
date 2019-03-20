@@ -48,7 +48,7 @@ dependencies {
     implementation project(':glide')
 
     testImplementation "junit:junit:$junit_version"
-    testImplementation "org.mockito:mockito-inline:$mockito_version"
+    testImplementation "org.mockito:mockito-core:$mockito_version"
 
     implementation project(':database')
     implementation "android.arch.persistence.room:runtime:$room_version"

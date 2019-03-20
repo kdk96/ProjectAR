@@ -1,8 +1,7 @@
 package com.kdk96.quests.domain
 
-import com.kdk96.quests.data.repository.QuestsRepository
 import com.kdk96.quests.domain.entity.QuestShortInfo
-import io.reactivex.Flowable
+import io.reactivex.Observable
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.`when`
@@ -16,7 +15,7 @@ class QuestsInteractorTest {
     @Before
     fun setUp() {
         questsRepository = mock(QuestsRepository::class.java)
-        questsInteractor = QuestsInteractor(questsRepository)
+        questsInteractor = QuestsInteractorImpl(questsRepository)
     }
 
     @Test
@@ -24,7 +23,7 @@ class QuestsInteractorTest {
         val quest1 = QuestShortInfo("1", "Q1", 1540176230190, "CN1", "CLU1", "GP1")
         val quest2 = QuestShortInfo("2", "Q2", 1540176230190, "CN2", "CLU2", "GP2")
         val quests = listOf(quest1, quest2)
-        `when`(questsRepository.getQuests()).thenReturn(Flowable.just(quests))
+        `when`(questsRepository.getQuests()).thenReturn(Observable.just(quests))
         val testObserver = questsInteractor.getQuests().test()
         testObserver.assertNoErrors()
                 .assertValue(quests)
@@ -32,7 +31,7 @@ class QuestsInteractorTest {
 
     @Test
     fun get_quests_failure() {
-        `when`(questsRepository.getQuests()).thenReturn(Flowable.error(IOException()))
+        `when`(questsRepository.getQuests()).thenReturn(Observable.error(IOException()))
         val testObserver = questsInteractor.getQuests().test()
         testObserver.assertNoValues()
                 .assertError(IOException::class.java)
