@@ -1,6 +1,5 @@
 package com.kdk96.settings.domain
 
-import com.kdk96.settings.data.repository.AccountRepository
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
@@ -31,7 +30,7 @@ class AccountInteractorTest {
     fun setUp() {
         accountRepository = mock(AccountRepository::class.java)
         router = mock(Router::class.java)
-        accountInteractor = AccountInteractor(
+        accountInteractor = AccountInteractorImpl(
                 accountRepository,
                 router,
                 Schedulers.trampoline(),

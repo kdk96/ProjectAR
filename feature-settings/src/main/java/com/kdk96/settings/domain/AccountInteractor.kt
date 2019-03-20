@@ -1,17 +1,28 @@
 package com.kdk96.settings.domain
 
-import com.kdk96.settings.data.repository.AccountRepository
+import com.kdk96.common.di.Rx
+import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Scheduler
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.android.support.SupportAppScreen
+import javax.inject.Inject
+import javax.inject.Named
 
-class AccountInteractor(
+interface AccountInteractor {
+    val accountDataChanges: Observable<AccountData>
+    fun signOut(): Completable
+    fun isSignedIn(): Boolean
+    fun getAccountData(): Completable
+    fun updateAvatar(path: String): Completable
+}
+
+class AccountInteractorImpl @Inject constructor(
         private val accountRepository: AccountRepository,
         private val router: Router,
-        private val mainScheduler: Scheduler,
-        private val authFlowScreen: SupportAppScreen
-) {
+        @Rx.MainThread private val mainScheduler: Scheduler,
+        @Named("auth flow") private val authFlowScreen: SupportAppScreen
+) : AccountInteractor {
     init {
         accountRepository.subscribeToRefreshFailure {
             signOut().observeOn(mainScheduler)
@@ -19,14 +30,14 @@ class AccountInteractor(
         }
     }
 
-    fun signOut() = accountRepository.signOut()
+    override fun signOut() = accountRepository.signOut()
 
-    fun isSignedIn() = accountRepository.isSingedIn()
+    override fun isSignedIn() = accountRepository.isSingedIn()
 
-    fun getAccountData() = accountRepository.getAccountData()
+    override fun getAccountData() = accountRepository.getAccountData()
 
-    val accountDataChanges: Observable<AccountData>
+    override val accountDataChanges: Observable<AccountData>
         get() = accountRepository.accountDataChanges
 
-    fun updateAvatar(path: String) = accountRepository.updateAvatar(path)
+    override fun updateAvatar(path: String) = accountRepository.updateAvatar(path)
 }

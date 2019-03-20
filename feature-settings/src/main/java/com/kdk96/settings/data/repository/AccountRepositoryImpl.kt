@@ -7,6 +7,7 @@ import com.kdk96.glide.GlideCacheCleaner
 import com.kdk96.settings.data.network.AccountApi
 import com.kdk96.settings.data.storage.AvatarFileProcessor
 import com.kdk96.settings.domain.AccountData
+import com.kdk96.settings.domain.AccountRepository
 import io.reactivex.Completable
 import io.reactivex.Scheduler
 import io.reactivex.Single
@@ -15,8 +16,9 @@ import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
+import javax.inject.Inject
 
-class AccountRepository(
+class AccountRepositoryImpl @Inject constructor(
         private val api: AccountApi,
         private val prefs: Prefs,
         @Rx.Io private val ioScheduler: Scheduler,
@@ -24,22 +26,20 @@ class AccountRepository(
         private val avatarFileProcessor: AvatarFileProcessor,
         private val glideCacheCleaner: GlideCacheCleaner,
         private val databaseCleaner: DatabaseCleaner
-) {
+) : AccountRepository {
     interface DatabaseCleaner {
         fun clean()
     }
 
-    val accountDataChanges = BehaviorSubject.create<AccountData>()
+    override val accountDataChanges = BehaviorSubject.create<AccountData>()
 
-    fun isSingedIn() = !authHolder.accessToken.isNullOrEmpty()
+    override fun isSingedIn() = !authHolder.accessToken.isNullOrEmpty()
 
-    fun subscribeToRefreshFailure(listener: () -> Unit) =
+    override fun subscribeToRefreshFailure(listener: () -> Unit) =
             authHolder.registerRefreshFailureListener(listener)
 
-    fun getAccountData() = Single.concat(
-            Single.just(AccountData(prefs.getEmail(), prefs.getName(), prefs.getPhotoUrl())),
-            getDataFromServer()
-    )
+    override fun getAccountData() = Single.just(AccountData(prefs.getEmail(), prefs.getName(), prefs.getPhotoUrl()))
+            .concatWith(getDataFromServer())
             .doOnNext(accountDataChanges::onNext)
             .subscribeOn(ioScheduler)
             .ignoreElements()
@@ -47,7 +47,7 @@ class AccountRepository(
     private fun getDataFromServer(): Single<AccountData> = api.getAccountInfo()
             .doOnSuccess { prefs.saveAccountData(it.email, it.name, it.photoUrl) }
 
-    fun updateAvatar(path: String) = Single.fromCallable { avatarFileProcessor.getCompressedImageFile(path) }
+    override fun updateAvatar(path: String) = Single.fromCallable { avatarFileProcessor.getCompressedImageFile(path) }
             .flatMap(::uploadAvatar)
             .doOnSuccess {
                 prefs.saveAccountData(it.email, it.name, it.photoUrl)
@@ -62,7 +62,7 @@ class AccountRepository(
         return api.updateAvatar(body).doFinally { compressedAvatarFile.delete() }
     }
 
-    fun signOut() = api.signOut()
+    override fun signOut() = api.signOut()
             .onErrorComplete()
             .andThen(Completable.fromAction {
                 authHolder.accessToken = null
