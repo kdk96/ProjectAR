@@ -12,7 +12,7 @@ class ApiAuthenticator(private val authHolder: AuthHolder) : Authenticator {
     }
 
     override fun authenticate(route: Route?, response: Response): Request? {
-        var accessToken: String? = null
+        var accessToken: String?
         val requestToken = response.request().header(AUTH_HEADER)
         synchronized(this) {
             accessToken = authHolder.accessToken

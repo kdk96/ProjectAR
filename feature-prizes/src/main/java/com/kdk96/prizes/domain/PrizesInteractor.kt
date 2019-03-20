@@ -1,7 +1,14 @@
 package com.kdk96.prizes.domain
 
-import com.kdk96.prizes.data.repository.PrizesRepository
+import io.reactivex.Single
+import javax.inject.Inject
 
-class PrizesInteractor(private val prizesRepository: PrizesRepository) {
-    fun getPrizes() = prizesRepository.getPrizes()
+interface PrizesInteractor {
+    fun getPrizes(): Single<List<Prize>>
+}
+
+class PrizesInteractorImpl @Inject constructor(
+        private val prizesRepository: PrizesRepository
+) : PrizesInteractor {
+    override fun getPrizes() = prizesRepository.getPrizes()
 }

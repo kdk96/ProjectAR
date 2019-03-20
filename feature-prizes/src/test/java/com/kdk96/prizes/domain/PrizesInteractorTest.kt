@@ -1,6 +1,5 @@
 package com.kdk96.prizes.domain
 
-import com.kdk96.prizes.data.repository.PrizesRepository
 import io.reactivex.Single
 import org.junit.Before
 import org.junit.Test
@@ -15,7 +14,7 @@ class PrizesInteractorTest {
     @Before
     fun setUp() {
         prizesRepository = mock(PrizesRepository::class.java)
-        prizesInteractor = PrizesInteractor(prizesRepository)
+        prizesInteractor = PrizesInteractorImpl(prizesRepository)
     }
 
     @Test

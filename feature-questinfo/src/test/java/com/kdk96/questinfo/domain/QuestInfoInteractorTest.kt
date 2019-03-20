@@ -1,6 +1,5 @@
 package com.kdk96.questinfo.domain
 
-import com.kdk96.questinfo.data.repository.QuestInfoRepository
 import com.kdk96.questinfo.domain.entity.Prize
 import com.kdk96.questinfo.domain.entity.QuestInfo
 import io.reactivex.Single
@@ -54,7 +53,7 @@ class QuestInfoInteractorTest {
     @Before
     fun setUp() {
         questInfoRepository = mock(QuestInfoRepository::class.java)
-        questInfoInteractor = QuestInfoInteractor(QUEST_ID, questInfoRepository)
+        questInfoInteractor = QuestInfoInteractorImpl(QUEST_ID, questInfoRepository)
     }
 
     @Test

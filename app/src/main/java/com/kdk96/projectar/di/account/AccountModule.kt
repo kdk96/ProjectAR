@@ -1,63 +1,57 @@
 package com.kdk96.projectar.di.account
 
 import android.content.Context
-import com.kdk96.auth.data.storage.AuthHolder
-import com.kdk96.auth.data.storage.Prefs
-import com.kdk96.common.di.Rx
 import com.kdk96.database.Database
-import com.kdk96.glide.GlideCacheCleaner
 import com.kdk96.projectar.ui.RootScreens
 import com.kdk96.settings.data.network.AccountApi
-import com.kdk96.settings.data.repository.AccountRepository
+import com.kdk96.settings.data.repository.AccountRepositoryImpl
 import com.kdk96.settings.data.storage.AvatarFileProcessor
 import com.kdk96.settings.domain.AccountInteractor
+import com.kdk96.settings.domain.AccountInteractorImpl
+import com.kdk96.settings.domain.AccountRepository
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
-import io.reactivex.Scheduler
 import retrofit2.Retrofit
-import ru.terrakok.cicerone.Router
+import ru.terrakok.cicerone.android.support.SupportAppScreen
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
-object AccountModule {
-    @Provides
-    @JvmStatic
-    @Singleton
-    fun provideAvatarFileProcessor(context: Context) = AvatarFileProcessor(context)
+abstract class AccountModule {
+    @Module
+    companion object {
+        @Provides
+        @JvmStatic
+        @Singleton
+        fun provideAvatarFileProcessor(context: Context) = AvatarFileProcessor(context)
 
-    @Provides
-    @JvmStatic
-    @Singleton
-    fun provideAccountApi(retrofit: Retrofit): AccountApi = retrofit.create(AccountApi::class.java)
+        @Provides
+        @JvmStatic
+        @Singleton
+        fun provideAccountApi(retrofit: Retrofit): AccountApi = retrofit.create(AccountApi::class.java)
 
-    @Provides
-    @JvmStatic
-    @Singleton
-    fun provideDatabaseCleaner(database: Database) = object : AccountRepository.DatabaseCleaner {
-        override fun clean() {
-            database.clearAllTables()
+        @Provides
+        @JvmStatic
+        @Singleton
+        fun provideDatabaseCleaner(database: Database) = object : AccountRepositoryImpl.DatabaseCleaner {
+            override fun clean() {
+                database.clearAllTables()
+            }
         }
+
+        @Provides
+        @Named("auth flow")
+        @JvmStatic
+        @Singleton
+        fun provideAuthFlowScreen(): SupportAppScreen = RootScreens.AuthFlow
     }
 
-    @Provides
-    @JvmStatic
+    @Binds
     @Singleton
-    fun provideAccountRepository(
-            accountApi: AccountApi,
-            prefs: Prefs,
-            @Rx.Io ioScheduler: Scheduler,
-            authHolder: AuthHolder,
-            avatarFileProcessor: AvatarFileProcessor,
-            glideCacheCleaner: GlideCacheCleaner,
-            databaseCleaner: AccountRepository.DatabaseCleaner
-    ) = AccountRepository(accountApi, prefs, ioScheduler, authHolder, avatarFileProcessor, glideCacheCleaner, databaseCleaner)
+    abstract fun provideAccountRepository(accountRepositoryImpl: AccountRepositoryImpl): AccountRepository
 
-    @Provides
-    @JvmStatic
+    @Binds
     @Singleton
-    fun provideAccountInteractor(
-            accountRepository: AccountRepository,
-            router: Router,
-            @Rx.MainThread mainThreadScheduler: Scheduler
-    ) = AccountInteractor(accountRepository, router, mainThreadScheduler, RootScreens.AuthFlow)
+    abstract fun provideAccountInteractor(accountInteractorImpl: AccountInteractorImpl): AccountInteractor
 }

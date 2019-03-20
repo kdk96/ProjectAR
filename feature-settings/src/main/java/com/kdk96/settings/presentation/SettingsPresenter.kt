@@ -1,19 +1,17 @@
 package com.kdk96.settings.presentation
 
 import com.arellomobile.mvp.InjectViewState
-import com.kdk96.common.di.Rx
 import com.kdk96.common.presentation.BasePresenter
 import com.kdk96.common.presentation.FlowRouter
 import com.kdk96.settings.R
 import com.kdk96.settings.domain.AccountInteractor
 import io.reactivex.Scheduler
-import javax.inject.Inject
 
 @InjectViewState
-class SettingsPresenter @Inject constructor(
+class SettingsPresenter(
         private val router: FlowRouter,
         private val accountInteractor: AccountInteractor,
-        @Rx.MainThread private val mainThreadScheduler: Scheduler,
+        private val mainThreadScheduler: Scheduler,
         private val screens: SettingsReachableScreens
 ) : BasePresenter<SettingsView>() {
     override fun onFirstViewAttach() {

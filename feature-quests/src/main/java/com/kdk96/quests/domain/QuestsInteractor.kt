@@ -1,9 +1,15 @@
 package com.kdk96.quests.domain
 
-import com.kdk96.quests.data.repository.QuestsRepository
+import com.kdk96.quests.domain.entity.QuestShortInfo
+import io.reactivex.Observable
+import javax.inject.Inject
 
-class QuestsInteractor(
+interface QuestsInteractor {
+    fun getQuests(): Observable<List<QuestShortInfo>>
+}
+
+class QuestsInteractorImpl @Inject constructor(
         private val repository: QuestsRepository
-) {
-    fun getQuests() = repository.getQuests()
+) : QuestsInteractor {
+    override fun getQuests() = repository.getQuests()
 }
