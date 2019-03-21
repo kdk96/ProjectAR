@@ -1,10 +1,7 @@
 package com.kdk96.database.entity
 
-import android.arch.persistence.room.ColumnInfo
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.ForeignKey
+import android.arch.persistence.room.*
 import android.arch.persistence.room.ForeignKey.CASCADE
-import android.arch.persistence.room.PrimaryKey
 
 @Entity(tableName = "QUESTS",
         foreignKeys = [
@@ -15,7 +12,8 @@ import android.arch.persistence.room.PrimaryKey
                     onDelete = CASCADE,
                     onUpdate = CASCADE
             )
-        ])
+        ],
+        indices = [Index("company_id")])
 data class Quest(
         @PrimaryKey val id: String,
         val title: String,
