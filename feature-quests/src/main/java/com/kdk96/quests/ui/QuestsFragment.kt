@@ -35,7 +35,8 @@ class QuestsFragment : BaseFragment(), QuestsView {
     @ProvidePresenter
     fun providePresenter() = presenter
 
-    private val adapter by lazy { QuestsAdapter { presenter.onQuestClick(it) } }
+    private val adapter
+        get() = questsRV.adapter as QuestsAdapter
     private val viewHandler = Handler()
     private var snackbar: Snackbar? = null
 
@@ -52,7 +53,7 @@ class QuestsFragment : BaseFragment(), QuestsView {
         with(questsRV) {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(context)
-            adapter = this@QuestsFragment.adapter
+            adapter = QuestsAdapter { presenter.onQuestClick(it) }
             itemAnimator = DefaultItemAnimator()
         }
     }
