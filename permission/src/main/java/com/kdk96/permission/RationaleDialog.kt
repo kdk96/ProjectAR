@@ -38,7 +38,7 @@ class RationaleDialog : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val messageId = arguments!!.getInt(ARG_MESSAGE_ID)
-        val permissions = arguments!!.getStringArray(ARG_PERMISSIONS)
+        val permissions = arguments!!.getStringArray(ARG_PERMISSIONS)!!
         val requestCode = arguments!!.getInt(ARG_REQUEST_CODE)
         return AlertDialog.Builder(context!!)
                 .setMessage(messageId)

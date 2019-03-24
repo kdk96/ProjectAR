@@ -5,15 +5,14 @@ import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
 import com.arellomobile.mvp.viewstate.strategy.OneExecutionStateStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
 
-@StateStrategyType(AddToEndSingleStrategy::class)
+@StateStrategyType(OneExecutionStateStrategy::class)
 interface SettingsView : MvpView {
+    @StateStrategyType(AddToEndSingleStrategy::class)
     fun updateAccountInfo(name: String, email: String, avatarUrl: String?)
-    fun showImageSourceDialog(show: Boolean)
-    @StateStrategyType(OneExecutionStateStrategy::class)
+    fun showImageSourceDialog()
     fun openCamera()
-    @StateStrategyType(OneExecutionStateStrategy::class)
     fun openGallery()
+    @StateStrategyType(AddToEndSingleStrategy::class)
     fun showProgress(show: Boolean)
-    @StateStrategyType(OneExecutionStateStrategy::class)
     fun showError(resId: Int)
 }
