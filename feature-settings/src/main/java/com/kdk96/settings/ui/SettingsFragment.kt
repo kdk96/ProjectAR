@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.support.v7.app.AlertDialog
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.kdk96.common.di.findComponentDependencies
@@ -23,7 +22,7 @@ import com.kdk96.settings.presentation.SettingsView
 import kotlinx.android.synthetic.main.fragment_settings.*
 import javax.inject.Inject
 
-class SettingsFragment : BaseFragment(), SettingsView {
+class SettingsFragment : BaseFragment(), SettingsView, ImageSourceDialog.OnItemSelectListener {
     companion object {
         const val TAKE_PHOTO_REQUEST = 1
         const val PICK_IMAGE_REQUEST = 2
@@ -84,16 +83,13 @@ class SettingsFragment : BaseFragment(), SettingsView {
                 .into(avatarIV)
     }
 
-    override fun showImageSourceDialog(show: Boolean) {
-        if (show) AlertDialog.Builder(context!!)
-                .setItems(R.array.image_source_array) { _, which ->
-                    when (which) {
-                        0 -> presenter.onTakePhotoClick()
-                        1 -> presenter.onPickFromGalleryClick()
-                    }
-                }.setOnDismissListener { presenter.onAvatarDismiss() }
-                .create().show()
+    override fun showImageSourceDialog() {
+        ImageSourceDialog.newInstance(this).show(fragmentManager, "image source dialog")
     }
+
+    override fun onTakePhoto() = presenter.onTakePhotoClick()
+
+    override fun onPickFromGallery() = presenter.onPickFromGalleryClick()
 
     override fun openCamera() = permissionHelper.doActionWithCheckPermissions(
             this,

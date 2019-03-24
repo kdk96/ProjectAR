@@ -36,7 +36,7 @@ import org.threeten.bp.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class QuestInfoFragment : BaseFragment(), QuestInfoView, CancelParticipationDialogFragment.CancelConfirmedListener {
+class QuestInfoFragment : BaseFragment(), QuestInfoView, CancelParticipationDialog.CancelConfirmedListener {
     companion object {
         private const val ARG_QUEST_ID = "quest id argument"
         fun newInstance(id: String) = QuestInfoFragment().apply {
@@ -210,7 +210,7 @@ class QuestInfoFragment : BaseFragment(), QuestInfoView, CancelParticipationDial
     }
 
     override fun showCancelConfirmationDialog() =
-            CancelParticipationDialogFragment.newInstance(this)
+            CancelParticipationDialog.newInstance(this)
                     .show(fragmentManager, "cancel dialog")
 
     override fun onCancelConfirmed() = presenter.onCancelConfirmed()

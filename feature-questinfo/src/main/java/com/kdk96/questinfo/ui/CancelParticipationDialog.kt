@@ -7,9 +7,9 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import com.kdk96.questinfo.R
 
-class CancelParticipationDialogFragment : DialogFragment() {
+class CancelParticipationDialog : DialogFragment() {
     companion object {
-        fun newInstance(fragment: Fragment) = CancelParticipationDialogFragment().apply {
+        fun newInstance(fragment: Fragment) = CancelParticipationDialog().apply {
             setTargetFragment(fragment, 0)
         }
     }
@@ -19,10 +19,10 @@ class CancelParticipationDialogFragment : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val listener = if (targetFragment is CancelConfirmedListener) targetFragment as CancelConfirmedListener else null
+        val listener = targetFragment as CancelConfirmedListener
         return AlertDialog.Builder(context!!)
                 .setMessage(R.string.cancel_participation_message)
-                .setPositiveButton(android.R.string.ok) { _, _ -> listener?.onCancelConfirmed() }
+                .setPositiveButton(android.R.string.ok) { _, _ -> listener.onCancelConfirmed() }
                 .setNegativeButton(android.R.string.cancel, null)
                 .create()
     }

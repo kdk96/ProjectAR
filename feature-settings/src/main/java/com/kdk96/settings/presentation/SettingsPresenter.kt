@@ -24,9 +24,7 @@ class SettingsPresenter(
                 .connect()
     }
 
-    fun onAvatarClick() = viewState.showImageSourceDialog(true)
-
-    fun onAvatarDismiss() = viewState.showImageSourceDialog(false)
+    fun onAvatarClick() = viewState.showImageSourceDialog()
 
     fun onTakePhotoClick() = viewState.openCamera()
 
