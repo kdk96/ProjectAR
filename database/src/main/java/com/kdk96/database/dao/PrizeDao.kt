@@ -1,7 +1,7 @@
 package com.kdk96.database.dao
 
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
+import androidx.room.Dao
+import androidx.room.Insert
 import com.kdk96.database.entity.Prize
 
 @Dao

@@ -1,11 +1,11 @@
 package com.kdk96.quests.ui
 
-import android.support.v7.recyclerview.extensions.ListAdapter
-import android.support.v7.util.DiffUtil
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.kdk96.glide.GlideApp
 import com.kdk96.quests.R
 import com.kdk96.quests.domain.entity.QuestShortInfo
@@ -15,7 +15,7 @@ import org.threeten.bp.ZoneId
 import org.threeten.bp.format.DateTimeFormatter
 
 class QuestsAdapter(
-        private val clickListener: (id: String) -> Unit
+    private val clickListener: (id: String) -> Unit
 ) : ListAdapter<QuestShortInfo, QuestsAdapter.ViewHolder>(DiffItemCallback()) {
     private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm, d MMM")
 
@@ -40,20 +40,20 @@ class QuestsAdapter(
                 companyNameTV.text = quest.companyName
                 grandPrizeTV.text = quest.grandPrizeDescription
                 val startTime = Instant.ofEpochMilli(quest.startTime)
-                        .atZone(ZoneId.of("UTC"))
-                        .withZoneSameInstant(ZoneId.systemDefault())
+                    .atZone(ZoneId.of("UTC"))
+                    .withZoneSameInstant(ZoneId.systemDefault())
                 startTimeTV.text = startTime.format(timeFormatter)
                 GlideApp.with(this).load(quest.companyLogoUrl)
-                        .into(companyLogoIV)
+                    .into(companyLogoIV)
             }
         }
     }
 
     private class DiffItemCallback : DiffUtil.ItemCallback<QuestShortInfo>() {
         override fun areItemsTheSame(oldItem: QuestShortInfo, newItem: QuestShortInfo): Boolean =
-                oldItem.id == newItem.id
+            oldItem.id == newItem.id
 
         override fun areContentsTheSame(oldItem: QuestShortInfo, newItem: QuestShortInfo): Boolean =
-                oldItem == newItem
+            oldItem == newItem
     }
 }

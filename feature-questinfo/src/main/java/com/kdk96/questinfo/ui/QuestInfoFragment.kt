@@ -4,16 +4,16 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.support.design.widget.BottomSheetBehavior
-import android.support.design.widget.Snackbar
-import android.support.v4.content.ContextCompat
 import android.view.View
+import androidx.core.content.ContextCompat
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.snackbar.Snackbar
 import com.kdk96.common.di.findComponentDependencies
 import com.kdk96.common.ui.BaseFragment
 import com.kdk96.glide.GlideApp
@@ -67,16 +67,16 @@ class QuestInfoFragment : BaseFragment(), QuestInfoView, CancelParticipationDial
 
     private val isLocationPermissionGranted: Boolean
         get() = ContextCompat.checkSelfPermission(
-                context!!,
-                Manifest.permission.ACCESS_FINE_LOCATION
+            context!!,
+            Manifest.permission.ACCESS_FINE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
 
     override fun onCreate(savedInstanceState: Bundle?) {
         componentBuilder = {
             DaggerQuestInfoComponent.builder()
-                    .questId(arguments!!.getString(ARG_QUEST_ID)!!)
-                    .questInfoDependencies(findComponentDependencies())
-                    .build()
+                .questId(arguments!!.getString(ARG_QUEST_ID)!!)
+                .questInfoDependencies(findComponentDependencies())
+                .build()
         }
         getComponent<QuestInfoComponent>().inject(this)
         super.onCreate(savedInstanceState)
@@ -108,10 +108,10 @@ class QuestInfoFragment : BaseFragment(), QuestInfoView, CancelParticipationDial
     }
 
     override fun showUserLocation() = permissionHelper.doActionWithCheckPermissions(
-            this,
-            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-            ACCESS_FINE_LOCATION_REQUEST,
-            R.string.access_fine_location_permission_rationale_dialog_message
+        this,
+        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+        ACCESS_FINE_LOCATION_REQUEST,
+        R.string.access_fine_location_permission_rationale_dialog_message
     )
 
     @SuppressLint("MissingPermission")
@@ -124,12 +124,12 @@ class QuestInfoFragment : BaseFragment(), QuestInfoView, CancelParticipationDial
         toolbar.title = questInfo.title
         questDescriptionTV.text = questInfo.description
         GlideApp.with(this)
-                .load(questInfo.companyLogoUrl)
-                .into(companyLogoIV)
+            .load(questInfo.companyLogoUrl)
+            .into(companyLogoIV)
         companyNameTV.text = questInfo.companyName
         val startTime = Instant.ofEpochMilli(questInfo.startTime)
-                .atZone(ZoneId.of("UTC"))
-                .withZoneSameInstant(ZoneId.systemDefault())
+            .atZone(ZoneId.of("UTC"))
+            .withZoneSameInstant(ZoneId.systemDefault())
         timeTV.text = startTime.format(timeFormatter)
         prizesTV.text = prizesToString(questInfo.prizes)
     }
@@ -159,9 +159,7 @@ class QuestInfoFragment : BaseFragment(), QuestInfoView, CancelParticipationDial
 
     override fun showStartPoint(latLngPair: Pair<Double, Double>) {
         val latLng = LatLng(latLngPair.first, latLngPair.second)
-        val marker = map?.addMarker(
-                MarkerOptions().position(latLng).title(getString(R.string.start_point))
-        )
+        val marker = map?.addMarker(MarkerOptions().position(latLng).title(getString(R.string.start_point)))
         val cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15f)
         map?.animateCamera(cameraUpdate, object : GoogleMap.CancelableCallback {
             override fun onFinish() {
@@ -210,8 +208,8 @@ class QuestInfoFragment : BaseFragment(), QuestInfoView, CancelParticipationDial
     }
 
     override fun showCancelConfirmationDialog() =
-            CancelParticipationDialog.newInstance(this)
-                    .show(fragmentManager, "cancel dialog")
+        CancelParticipationDialog.newInstance(this)
+            .show(fragmentManager, "cancel dialog")
 
     override fun onCancelConfirmed() = presenter.onCancelConfirmed()
 
@@ -255,9 +253,10 @@ class QuestInfoFragment : BaseFragment(), QuestInfoView, CancelParticipationDial
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) =
-            permissionHelper.onRequestPermissionsResult(this, requestCode, permissions, grantResults,
-                    mapOf(ACCESS_FINE_LOCATION_REQUEST to R.string.access_fine_location_permission_rationale_dialog_message)
-            )
+        permissionHelper.onRequestPermissionsResult(
+            this, requestCode, permissions, grantResults,
+            mapOf(ACCESS_FINE_LOCATION_REQUEST to R.string.access_fine_location_permission_rationale_dialog_message)
+        )
 
     override fun onBackPressed() = presenter.onBackPressed()
 

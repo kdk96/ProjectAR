@@ -3,7 +3,6 @@ package com.kdk96.common.ui
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.arellomobile.mvp.MvpAppCompatFragment
 import com.kdk96.common.di.ComponentManager
 import com.kdk96.common.di.DaggerComponent
 

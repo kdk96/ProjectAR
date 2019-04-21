@@ -23,7 +23,7 @@ android {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
-    implementation "com.android.support:appcompat-v7:$support_version"
+    implementation "androidx.appcompat:appcompat:$appcompat_version"
 
     implementation "com.google.dagger:dagger:$dagger_version"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
@@ -32,7 +32,6 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxandroid:$rxandroid_version"
 
     implementation "com.arello-mobile:moxy:$moxy_version"
-    implementation "com.arello-mobile:moxy-app-compat:$moxy_version"
     kapt "com.arello-mobile:moxy-compiler:$moxy_version"
 
     implementation "ru.terrakok.cicerone:cicerone:$cicerone_version"
@@ -53,7 +52,7 @@ dependencies {
     implementation project(':feature-quests')
     implementation "com.jakewharton.threetenabp:threetenabp:$threetenabp_version"
     implementation project(':database')
-    implementation "android.arch.persistence.room:runtime:$room_version"
+    implementation "androidx.room:room-runtime:$room_version"
     implementation project(':feature-prizes')
     implementation project(':feature-settings')
 

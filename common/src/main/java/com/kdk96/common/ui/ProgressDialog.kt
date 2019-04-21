@@ -1,10 +1,10 @@
 package com.kdk96.common.ui
 
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.fragment.app.DialogFragment
 import com.kdk96.common.R
 
 class ProgressDialog : DialogFragment() {
@@ -25,7 +25,7 @@ class ProgressDialog : DialogFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
-            inflater.inflate(R.layout.dialog_progress, container, false)
+        inflater.inflate(R.layout.dialog_progress, container, false)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)

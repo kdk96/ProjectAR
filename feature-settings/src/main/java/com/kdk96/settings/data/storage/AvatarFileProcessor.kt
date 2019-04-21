@@ -9,8 +9,8 @@ import android.graphics.Matrix
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
-import android.support.media.ExifInterface
-import android.support.v4.content.FileProvider
+import androidx.core.content.FileProvider
+import androidx.exifinterface.media.ExifInterface
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -31,8 +31,9 @@ class AvatarFileProcessor(private val context: Context) {
         val appPicturesDir = File(picturesDir, "ProjectAR")
         if (!appPicturesDir.exists())
             appPicturesDir.mkdirs()
-        return File(appPicturesDir,
-                "$photoFileName.jpg"
+        return File(
+            appPicturesDir,
+            "$photoFileName.jpg"
         ).apply { imagePath = absolutePath }
     }
 
@@ -76,7 +77,15 @@ class AvatarFileProcessor(private val context: Context) {
                 val exif = ExifInterface(path)
                 val orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
                 if (orientation != ExifInterface.ORIENTATION_NORMAL) {
-                    bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, getRotationMatrix(orientation), false)
+                    bitmap = Bitmap.createBitmap(
+                        bitmap,
+                        0,
+                        0,
+                        bitmap.width,
+                        bitmap.height,
+                        getRotationMatrix(orientation),
+                        false
+                    )
                 }
             } catch (exception: IOException) {
             }

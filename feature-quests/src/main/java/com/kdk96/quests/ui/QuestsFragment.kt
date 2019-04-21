@@ -2,11 +2,11 @@ package com.kdk96.quests.ui
 
 import android.os.Bundle
 import android.os.Handler
-import android.support.design.widget.Snackbar
-import android.support.v7.widget.DefaultItemAnimator
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
+import com.google.android.material.snackbar.Snackbar
 import com.kdk96.common.di.findComponentDependencies
 import com.kdk96.common.ui.BaseFragment
 import com.kdk96.common.ui.HasDrawerToggle
@@ -68,7 +68,7 @@ class QuestsFragment : BaseFragment(), QuestsView {
 
     override fun showError(resId: Int) {
         snackbar = Snackbar.make(view!!, resId, Snackbar.LENGTH_INDEFINITE)
-                .setAction(R.string.retry) { presenter.onRefresh() }
+            .setAction(R.string.retry) { presenter.onRefresh() }
         snackbar?.show()
     }
 

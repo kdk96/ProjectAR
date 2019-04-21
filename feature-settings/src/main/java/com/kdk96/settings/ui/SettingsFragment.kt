@@ -4,9 +4,9 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
+import com.google.android.material.snackbar.Snackbar
 import com.kdk96.common.di.findComponentDependencies
 import com.kdk96.common.ui.BaseFragment
 import com.kdk96.common.ui.HasDrawerToggle
@@ -77,10 +77,10 @@ class SettingsFragment : BaseFragment(), SettingsView, ImageSourceDialog.OnItemS
         nameTV.text = name
         emailTV.text = email
         GlideApp.with(this)
-                .load(avatarUrl)
-                .placeholder(R.drawable.avatar_placeholder_gray)
-                .circleCrop()
-                .into(avatarIV)
+            .load(avatarUrl)
+            .placeholder(R.drawable.avatar_placeholder_gray)
+            .circleCrop()
+            .into(avatarIV)
     }
 
     override fun showImageSourceDialog() {
@@ -92,37 +92,38 @@ class SettingsFragment : BaseFragment(), SettingsView, ImageSourceDialog.OnItemS
     override fun onPickFromGallery() = presenter.onPickFromGalleryClick()
 
     override fun openCamera() = permissionHelper.doActionWithCheckPermissions(
-            this,
-            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-            TAKE_PHOTO_WRITE_EXTERNAL_STORAGE_REQUEST,
-            R.string.write_external_storage_permission_rationale_dialog_message
+        this,
+        arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+        TAKE_PHOTO_WRITE_EXTERNAL_STORAGE_REQUEST,
+        R.string.write_external_storage_permission_rationale_dialog_message
     )
 
     private fun takePhoto() {
         val takePhotoIntent = avatarFileProcessor.getTakePhotoIntent()
         takePhotoIntent?.let { startActivityForResult(it, TAKE_PHOTO_REQUEST) }
-                ?: presenter.onCameraOpenFailure()
+            ?: presenter.onCameraOpenFailure()
     }
 
     override fun openGallery() = permissionHelper.doActionWithCheckPermissions(
-            this,
-            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-            PICK_IMAGE_WRITE_EXTERNAL_STORAGE_REQUEST,
-            R.string.write_external_storage_permission_rationale_dialog_message
+        this,
+        arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+        PICK_IMAGE_WRITE_EXTERNAL_STORAGE_REQUEST,
+        R.string.write_external_storage_permission_rationale_dialog_message
     )
 
     private fun pickImageFromGallery() = startActivityForResult(
-            Intent(Intent.ACTION_PICK).apply { type = "image/*" },
-            PICK_IMAGE_REQUEST
+        Intent(Intent.ACTION_PICK).apply { type = "image/*" },
+        PICK_IMAGE_REQUEST
     )
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) =
-            permissionHelper.onRequestPermissionsResult(this, requestCode, permissions, grantResults,
-                    mapOf(
-                            TAKE_PHOTO_WRITE_EXTERNAL_STORAGE_REQUEST to R.string.write_external_storage_permission_rationale_dialog_message,
-                            PICK_IMAGE_WRITE_EXTERNAL_STORAGE_REQUEST to R.string.write_external_storage_permission_rationale_dialog_message
-                    )
+        permissionHelper.onRequestPermissionsResult(
+            this, requestCode, permissions, grantResults,
+            mapOf(
+                TAKE_PHOTO_WRITE_EXTERNAL_STORAGE_REQUEST to R.string.write_external_storage_permission_rationale_dialog_message,
+                PICK_IMAGE_WRITE_EXTERNAL_STORAGE_REQUEST to R.string.write_external_storage_permission_rationale_dialog_message
             )
+        )
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == Activity.RESULT_OK) when (requestCode) {

@@ -1,7 +1,7 @@
 package com.kdk96.projectar.di.database
 
-import android.arch.persistence.room.Room
 import android.content.Context
+import androidx.room.Room
 import com.kdk96.database.Database
 import dagger.Module
 import dagger.Provides

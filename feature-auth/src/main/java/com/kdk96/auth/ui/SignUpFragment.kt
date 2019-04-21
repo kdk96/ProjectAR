@@ -1,10 +1,10 @@
 package com.kdk96.auth.ui
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
-import com.jakewharton.rxbinding2.widget.textChanges
+import com.google.android.material.snackbar.Snackbar
+import com.jakewharton.rxbinding3.widget.textChanges
 import com.kdk96.auth.di.signup.DaggerSignUpComponent
 import com.kdk96.auth.di.signup.SignUpComponent
 import com.kdk96.auth.presentation.signup.SignUpPresenter

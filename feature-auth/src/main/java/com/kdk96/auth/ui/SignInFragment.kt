@@ -2,15 +2,15 @@ package com.kdk96.auth.ui
 
 import android.os.Bundle
 import android.os.Handler
-import android.support.constraint.ConstraintSet
-import android.support.design.widget.Snackbar
-import android.support.transition.TransitionManager
 import android.view.KeyEvent
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintSet
+import androidx.transition.TransitionManager
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
-import com.jakewharton.rxbinding2.widget.textChanges
+import com.google.android.material.snackbar.Snackbar
+import com.jakewharton.rxbinding3.widget.textChanges
 import com.kdk96.auth.di.signin.DaggerSignInComponent
 import com.kdk96.auth.di.signin.SignInComponent
 import com.kdk96.auth.presentation.signin.SignInPresenter

@@ -1,6 +1,6 @@
 package com.kdk96.common.ui
 
-import android.support.v7.widget.Toolbar
+import androidx.appcompat.widget.Toolbar
 
 interface HasDrawerToggle {
     fun setupDrawerToggle(toolbar: Toolbar)

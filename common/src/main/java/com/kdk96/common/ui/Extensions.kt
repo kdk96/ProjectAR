@@ -2,10 +2,10 @@ package com.kdk96.common.ui
 
 import android.app.Activity
 import android.content.Context
-import android.support.v4.app.Fragment
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.android.support.SupportAppScreen
 import ru.terrakok.cicerone.commands.BackTo

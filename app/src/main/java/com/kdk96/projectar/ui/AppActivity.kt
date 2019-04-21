@@ -1,9 +1,9 @@
 package com.kdk96.projectar.ui
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentTransaction
-import com.arellomobile.mvp.MvpAppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import com.kdk96.common.ui.BaseFragment
 import com.kdk96.projectar.App
 import com.kdk96.projectar.R
@@ -14,7 +14,7 @@ import ru.terrakok.cicerone.android.support.SupportAppNavigator
 import ru.terrakok.cicerone.commands.Command
 import javax.inject.Inject
 
-class AppActivity : MvpAppCompatActivity() {
+class AppActivity : AppCompatActivity() {
     @Inject
     lateinit var navigatorHolder: NavigatorHolder
     @Inject

@@ -2,9 +2,9 @@ package com.kdk96.main.ui
 
 import android.content.res.Configuration
 import android.os.Bundle
-import android.support.v4.view.GravityCompat
-import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.widget.Toolbar
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.widget.Toolbar
+import androidx.core.view.GravityCompat
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.kdk96.common.di.ComponentDependenciesProvider
@@ -100,10 +100,10 @@ class MainFlowFragment : FlowFragment(), MainView, HasDrawerToggle, HasChildDepe
         headerView.nameTV.text = name
         headerView.emailTV.text = email
         GlideApp.with(this)
-                .load(avatarUrl)
-                .placeholder(R.drawable.avatar_placeholder)
-                .circleCrop()
-                .into(headerView.avatarIV)
+            .load(avatarUrl)
+            .placeholder(R.drawable.avatar_placeholder)
+            .circleCrop()
+            .into(headerView.avatarIV)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration?) {
@@ -112,8 +112,10 @@ class MainFlowFragment : FlowFragment(), MainView, HasDrawerToggle, HasChildDepe
     }
 
     override fun setupDrawerToggle(toolbar: Toolbar) {
-        drawerToggle = ActionBarDrawerToggle(this.activity, drawerLayout, toolbar,
-                R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        drawerToggle = ActionBarDrawerToggle(
+            this.activity, drawerLayout, toolbar,
+            R.string.navigation_drawer_open, R.string.navigation_drawer_close
+        )
         drawerLayout.addDrawerListener(drawerToggle!!)
         drawerToggle!!.syncState()
     }

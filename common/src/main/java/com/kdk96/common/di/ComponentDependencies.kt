@@ -1,6 +1,6 @@
 package com.kdk96.common.di
 
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import dagger.MapKey
 import kotlin.reflect.KClass
 
