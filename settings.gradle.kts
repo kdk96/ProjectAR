@@ -1,5 +1,5 @@
 include(
-//        ":common",
+    ":common"
 //        ":app",
 //        ":feature-auth",
 //        ":auth",

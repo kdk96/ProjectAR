@@ -1,4 +1,4 @@
-package com.kdk96.common.ui
+package com.kdk96.projectar.common.ui
 
 import android.app.Activity
 import android.content.Context
@@ -6,10 +6,10 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import ru.terrakok.cicerone.Navigator
-import ru.terrakok.cicerone.android.support.SupportAppScreen
-import ru.terrakok.cicerone.commands.BackTo
-import ru.terrakok.cicerone.commands.Replace
+import com.github.terrakok.cicerone.BackTo
+import com.github.terrakok.cicerone.Navigator
+import com.github.terrakok.cicerone.Replace
+import com.github.terrakok.cicerone.Screen
 
 val TextView.trimmedString: String
     get() = text.trim().toString()
@@ -30,11 +30,11 @@ fun Context.hideKeyboard(view: View) {
     imm.hideSoftInputFromWindow(view.windowToken, 0)
 }
 
-fun Navigator.setLaunchScreen(screen: SupportAppScreen) {
+fun Navigator.setLaunchScreen(screen: Screen) {
     applyCommands(
-            arrayOf(
-                    BackTo(null),
-                    Replace(screen)
-            )
+        arrayOf(
+            BackTo(null),
+            Replace(screen)
+        )
     )
 }

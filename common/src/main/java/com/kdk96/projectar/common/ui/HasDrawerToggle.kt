@@ -1,4 +1,4 @@
-package com.kdk96.common.ui
+package com.kdk96.projectar.common.ui
 
 import androidx.appcompat.widget.Toolbar
 

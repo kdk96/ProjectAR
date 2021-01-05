@@ -19,4 +19,8 @@ object Versions {
         const val material = "1.2.1"
         const val preference = "1.1.1"
     }
+
+    const val tanto = "1.0.0-alpha3"
+
+    const val cicerone = "6.6"
 }

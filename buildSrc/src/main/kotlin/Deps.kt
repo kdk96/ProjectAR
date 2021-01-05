@@ -12,4 +12,8 @@ object Deps {
 
     const val dagger = "com.google.dagger:dagger:${Versions.dagger}"
     const val daggerCompiler = "com.google.dagger:dagger-compiler:${Versions.dagger}"
+
+    const val tanto = "com.kdk96.tanto:tanto-android:${Versions.tanto}"
+
+    const val cicerone = "com.github.terrakok:cicerone:${Versions.cicerone}"
 }
