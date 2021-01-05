@@ -1,6 +1,7 @@
 include(
-    ":common"
-//        ":app",
+    ":common",
+
+    ":app"
 //        ":feature-auth",
 //        ":auth",
 //        ":auth-api",

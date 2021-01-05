@@ -1,6 +1,7 @@
 <resources>
 
-    <style name="AppTheme.Launcher">
+    <style name="Theme.ProjectAR.Launcher">
         <item name="android:windowBackground">@drawable/launcher_background</item>
     </style>
+
 </resources>

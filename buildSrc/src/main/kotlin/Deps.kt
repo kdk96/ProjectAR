@@ -1,6 +1,10 @@
 object Deps {
     const val androidGradlePlugin = "com.android.tools.build:gradle:${Versions.android.gradlePlugin}"
 
+    object android {
+        const val desugarJdkLibs = "com.android.tools:desugar_jdk_libs:${Versions.android.desugarJdkLibs}"
+    }
+
     object androidx {
         const val appCompat = "androidx.appcompat:appcompat:${Versions.androidx.appCompat}"
         const val coreKtx = "androidx.core:core-ktx:${Versions.androidx.core}"
