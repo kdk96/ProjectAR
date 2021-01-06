@@ -1,6 +1,6 @@
 package com.kdk96.projectar.data.network
 
-//import com.kdk96.auth.data.storage.AuthHolder
+//import com.kdk96.projectar.auth.data.storage.AuthHolder
 //import okhttp3.Authenticator
 //import okhttp3.Request
 //import okhttp3.Response

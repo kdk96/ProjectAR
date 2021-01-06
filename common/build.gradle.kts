@@ -16,6 +16,8 @@ android {
 }
 
 dependencies {
+    implementation(Deps.kotlinx.coroutines)
+
     implementation(Deps.androidx.appCompat)
     implementation(Deps.androidx.fragmentKtx)
     implementation(Deps.androidx.material)
@@ -24,5 +26,10 @@ dependencies {
     implementation(Deps.dagger)
     kapt(Deps.daggerCompiler)
 
+    implementation(Deps.tanto)
+
     implementation(Deps.cicerone)
+
+    releaseImplementation(Deps.gemini)
+    debugImplementation(Deps.geminiDebug)
 }

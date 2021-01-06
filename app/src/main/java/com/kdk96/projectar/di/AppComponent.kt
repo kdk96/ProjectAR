@@ -1,8 +1,27 @@
 package com.kdk96.projectar.di
 
+import android.content.Context
+import com.github.terrakok.cicerone.Cicerone
+import com.github.terrakok.cicerone.Router
+import com.kdk96.projectar.App
+import com.kdk96.projectar.auth.di.auth.AuthFlowDependencies
+import com.kdk96.projectar.common.domain.resource.ResourceProvider
+import com.kdk96.projectar.data.resource.AndroidResourceProvider
+import com.kdk96.tanto.ComponentDependencies
+import com.kdk96.tanto.Injector
+import com.kdk96.tanto.injectorBuilder
+import dagger.Binds
+import dagger.BindsInstance
+import dagger.Component
+import dagger.Module
+import dagger.Provides
+import dagger.multibindings.ClassKey
+import dagger.multibindings.IntoMap
+import javax.inject.Singleton
+
 //import android.content.Context
-//import com.kdk96.auth.di.auth.AuthFlowDependencies
-//import com.kdk96.auth.ui.AuthFlowReachableScreens
+//import com.kdk96.projectar.auth.di.auth.AuthFlowDependencies
+//import com.kdk96.projectar.auth.ui.AuthFlowReachableScreens
 //import com.kdk96.common.di.Rx
 //import com.kdk96.main.di.MainFlowDependencies
 //import com.kdk96.main.ui.MainFlowReachableScreens
@@ -37,45 +56,59 @@ package com.kdk96.projectar.di
 //import javax.inject.Singleton
 //
 //
-//@Module
-//object AppComponentBuilderModule {
-//    @Provides
-//    @IntoMap
-//    @ClassKey(App::class)
-//    fun provideBuilder() = injectorBuilder<App> {
-//        DaggerAppComponent.builder()
-//            .context(this)
-//            .build()
-//    }
-//}
+@Module
+object AppComponentBuilderModule {
+    @Provides
+    @IntoMap
+    @ClassKey(App::class)
+    fun provideBuilder() = injectorBuilder<App> {
+        DaggerAppComponent.builder()
+            .context(this)
+            .build()
+    }
+}
+
 //
 //
-//@Singleton
-//@Component(
-//    modules = [
-//        AppModule::class,
+@Singleton
+@Component(
+    modules = [
+        AppModule::class,
 //        SchedulersModule::class,
-//        NavigationModule::class,
-//        ComponentDependenciesModule::class,
+        NavigationModule::class,
+        ComponentDependenciesModule::class,
 //        AuthApiModule::class,
 //        AuthModule::class,
 //        GlideModule::class,
 //        AccountModule::class,
 //        DatabaseModule::class,
 //        ServerApiModule::class
-//    ]
-//)
-//interface AppComponent : Injector<App>, AuthFlowDependencies, MainFlowDependencies,
+    ]
+)
+interface AppComponent : Injector<App>,
+    AppActivityDependencies,
+    AuthFlowDependencies {
+    //, MainFlowDependencies,
 //    QuestInfoDependencies, QuestFlowDependencies, AppActivityDeps {
-//    @Component.Builder
-//    interface Builder {
-//        @BindsInstance
-//        fun context(context: Context): Builder
-//
-//        fun build(): AppComponent
-//    }
-//}
-//
+    @Component.Builder
+    interface Builder {
+
+        @BindsInstance
+        fun context(context: Context): Builder
+
+        fun build(): AppComponent
+    }
+}
+
+
+@Module
+interface AppModule {
+
+    @Binds
+    @Singleton
+    fun bindResourceProvider(androidResourceProvider: AndroidResourceProvider): ResourceProvider
+}
+
 //@Module
 //object AppModule {
 //    @Provides
@@ -86,7 +119,7 @@ package com.kdk96.projectar.di
 //        accountInteractor: AccountInteractor
 //    ) = Launcher(router, accountInteractor)
 //}
-//
+
 //@Module
 //object SchedulersModule {
 //    @Provides
@@ -102,22 +135,19 @@ package com.kdk96.projectar.di
 //    fun provideIoScheduler() = Schedulers.io()
 //}
 //
-//@Module
-//object NavigationModule {
-//    @Provides
-//    @JvmStatic
-//    @Singleton
-//    fun provideCicerone() = Cicerone.create()
-//
-//    @Provides
-//    @JvmStatic
-//    @Singleton
-//    fun provideRouter(cicerone: Cicerone<Router>) = cicerone.router
-//
-//    @Provides
-//    @JvmStatic
-//    @Singleton
-//    fun provideNavigatorHolder(cicerone: Cicerone<Router>) = cicerone.navigatorHolder
+@Module
+object NavigationModule {
+    @Provides
+    @Singleton
+    fun provideCicerone() = Cicerone.create()
+
+    @Provides
+    @Singleton
+    fun provideRouter(cicerone: Cicerone<Router>) = cicerone.router
+
+    @Provides
+    @Singleton
+    fun provideNavigatorHolder(cicerone: Cicerone<Router>) = cicerone.getNavigatorHolder()
 //
 //    @Provides
 //    @JvmStatic
@@ -145,12 +175,11 @@ package com.kdk96.projectar.di
 //            override fun getFragment() = QuestFlowFragment.newInstance(questId)
 //        }
 //    }
-//}
-//
-//@Module
-//interface ComponentDependenciesModule {
-//
-//    @Binds
-//    fun provideComponentDeps(appComponent: AppComponent):ComponentDependencies
-//
-//}
+}
+
+@Module
+interface ComponentDependenciesModule {
+
+    @Binds
+    fun provideComponentDependencies(appComponent: AppComponent): ComponentDependencies
+}

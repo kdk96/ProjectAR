@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     kotlin("android")
     kotlin("kapt")
+    id("ktlint")
 }
 
 android {
@@ -18,6 +19,13 @@ android {
 
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
+
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
     }
 }
 
@@ -32,7 +40,11 @@ dependencies {
 
     implementation(Deps.tanto)
 
+    implementation(Deps.cicerone)
+
     implementation(project(":common"))
+
+    implementation(project(":feature-auth"))
 
 //    implementation "androidx.appcompat:appcompat:$appcompat_version"
 //

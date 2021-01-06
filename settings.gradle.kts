@@ -1,8 +1,9 @@
 include(
     ":common",
 
-    ":app"
-//        ":feature-auth",
+    ":app",
+
+    ":feature-auth"
 //        ":auth",
 //        ":auth-api",
 //        ":firebase-auth-api",

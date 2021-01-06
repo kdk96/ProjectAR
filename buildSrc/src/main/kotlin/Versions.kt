@@ -1,6 +1,10 @@
 object Versions {
     const val kotlin = "1.4.21"
 
+    object kotlinx {
+        const val coroutines = "1.4.2"
+    }
+
     const val dagger = "2.30.1"
 
     object android {
@@ -19,11 +23,14 @@ object Versions {
         const val fragment = "1.2.5"
         const val material = "1.2.1"
         const val preference = "1.1.1"
+        const val constraintLayout = "2.0.4"
     }
 
     const val tanto = "1.0.0-alpha3"
 
     const val cicerone = "6.6"
+
+    const val gemini = "2.0.0-alpha4"
 
     const val ktlint = "0.40.0"
 }

@@ -1,11 +1,11 @@
 package com.kdk96.projectar.di.auth
 
 //import android.content.Context
-//import com.kdk96.auth.data.network.FirebaseAuthApi
-//import com.kdk96.auth.data.network.FirebaseAuthImpl
-//import com.kdk96.auth.data.network.FirebaseRefreshApi
-//import com.kdk96.auth.data.network.KeyInterceptor
-//import com.kdk96.auth.data.repository.AuthApi
+//import com.kdk96.projectar.auth.data.network.FirebaseAuthApi
+//import com.kdk96.projectar.auth.data.network.FirebaseAuthImpl
+//import com.kdk96.projectar.auth.data.network.FirebaseRefreshApi
+//import com.kdk96.projectar.auth.data.network.KeyInterceptor
+//import com.kdk96.projectar.auth.data.repository.AuthApi
 //import com.kdk96.projectar.R
 //import dagger.Module
 //import dagger.Provides
