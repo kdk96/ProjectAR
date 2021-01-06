@@ -20,4 +20,6 @@ object Deps {
     const val tanto = "com.kdk96.tanto:tanto-android:${Versions.tanto}"
 
     const val cicerone = "com.github.terrakok:cicerone:${Versions.cicerone}"
+
+    const val ktlint = "com.pinterest:ktlint:${Versions.ktlint}"
 }

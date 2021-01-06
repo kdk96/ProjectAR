@@ -24,4 +24,6 @@ object Versions {
     const val tanto = "1.0.0-alpha3"
 
     const val cicerone = "6.6"
+
+    const val ktlint = "0.40.0"
 }
