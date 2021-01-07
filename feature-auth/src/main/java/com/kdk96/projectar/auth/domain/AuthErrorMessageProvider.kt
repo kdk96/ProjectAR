@@ -12,7 +12,13 @@ class AuthErrorMessageProvider @Inject constructor(
 
     val emptyEmail: String get() = resourceProvider.getString(R.string.empty_email_error)
 
+    val emptyPassword: String get() = resourceProvider.getString(R.string.empty_password_error)
+
     val invalidEmail: String get() = resourceProvider.getString(R.string.invalid_email_error)
 
     val noSuchAccount: String get() = resourceProvider.getString(R.string.no_such_account_error)
+
+    val invalidPassword: String get() = resourceProvider.getString(R.string.invalid_password_error)
+
+    val userDisabled: String get() = resourceProvider.getString(R.string.user_disabled_error)
 }

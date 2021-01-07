@@ -61,6 +61,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/emailTIL"
+            app:passwordToggleEnabled="true"
             tools:visibility="visible">
 
             <com.google.android.material.textfield.TextInputEditText

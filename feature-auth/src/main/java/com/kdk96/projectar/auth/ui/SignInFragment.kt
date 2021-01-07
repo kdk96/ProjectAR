@@ -2,6 +2,8 @@ package com.kdk96.projectar.auth.ui
 
 import android.os.Bundle
 import android.view.View
+import android.view.inputmethod.EditorInfo
+import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import com.google.android.material.snackbar.Snackbar
@@ -12,8 +14,9 @@ import com.kdk96.projectar.auth.presentation.signin.SignInStore
 import com.kdk96.projectar.auth.screen.R
 import com.kdk96.projectar.auth.screen.databinding.FragmentSignInBinding
 import com.kdk96.projectar.common.domain.validation.Valid
-import com.kdk96.projectar.common.domain.validation.Violation
+import com.kdk96.projectar.common.domain.validation.asViolation
 import com.kdk96.projectar.common.ui.BaseFragment
+import com.kdk96.projectar.common.ui.setTextIfNotFocused
 import com.kdk96.tanto.android.inject
 import javax.inject.Inject
 
@@ -38,6 +41,19 @@ class SignInFragment : BaseFragment<SignInStore.Action, SignInStore.State>(R.lay
         _binding = FragmentSignInBinding.bind(view)
         binding.apply {
             emailET.addTextChangedListener { postAction(SignInStore.Action.ChangeUsername(it?.toString().orEmpty())) }
+            val onActionDoneListener = TextView.OnEditorActionListener { _, actionId, _ ->
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    postAction(SignInStore.Action.SignIn)
+                    true
+                } else {
+                    false
+                }
+            }
+            emailET.setOnEditorActionListener(onActionDoneListener)
+
+            passwordET.addTextChangedListener { postAction(SignInStore.Action.ChangePassword(it?.toString().orEmpty())) }
+            passwordET.setOnEditorActionListener(onActionDoneListener)
+
             signInButton.setOnClickListener { postAction(SignInStore.Action.SignIn) }
         }
     }
@@ -48,14 +64,19 @@ class SignInFragment : BaseFragment<SignInStore.Action, SignInStore.State>(R.lay
     }
 
     override fun onStateChanged(state: SignInStore.State) {
-        binding.emailTIL.isEnabled = !state.isLoading
-        binding.passwordTIL.isEnabled = !state.isLoading
-        binding.signInButton.isEnabled = !state.isLoading
-        binding.signUpButton.isEnabled = !state.isLoading
-        binding.progressBar.isVisible = state.isLoading
+        binding.apply {
+            passwordET.setTextIfNotFocused(state.password.value)
 
-        binding.emailTIL.error = (state.email.verifiable as? Violation)?.message
-        binding.passwordTIL.isVisible = state.email.verifiable is Valid
+            emailTIL.isEnabled = !state.isLoading
+            passwordTIL.isEnabled = !state.isLoading
+            signInButton.isEnabled = !state.isLoading
+            signUpButton.isEnabled = !state.isLoading
+            progressBar.isVisible = state.isLoading
+
+            emailTIL.error = state.email.verifiable.asViolation()?.message
+            passwordTIL.isVisible = state.email.verifiable is Valid
+            passwordTIL.error = state.password.verifiable.asViolation()?.message
+        }
     }
 
     override fun onEvent(event: SignInStore.Event) {

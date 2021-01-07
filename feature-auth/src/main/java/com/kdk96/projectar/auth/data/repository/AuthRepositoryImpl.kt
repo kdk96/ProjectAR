@@ -3,8 +3,11 @@ package com.kdk96.projectar.auth.data.repository
 import com.kdk96.projectar.auth.data.api.AuthApi
 import com.kdk96.projectar.auth.domain.AuthErrorMessageProvider
 import com.kdk96.projectar.auth.domain.AuthRepository
+import com.kdk96.projectar.auth.domain.InvalidCredentialsException
+import com.kdk96.projectar.auth.domain.InvalidPasswordException
 import com.kdk96.projectar.auth.domain.InvalidUsernameException
 import com.kdk96.projectar.auth.domain.NoSuchAccountException
+import com.kdk96.projectar.auth.domain.UserDisabledException
 import com.kdk96.projectar.common.domain.validation.Valid
 import com.kdk96.projectar.common.domain.validation.Verifiable
 import com.kdk96.projectar.common.domain.validation.Violation
@@ -15,8 +18,6 @@ import javax.inject.Inject
 class AuthRepositoryImpl @Inject constructor(
     private val authApi: AuthApi,
     private val authErrorMessageProvider: AuthErrorMessageProvider
-//        @Rx.Io private val ioScheduler: Scheduler,
-//        private val authHolder: AuthHolder
 ) : AuthRepository {
 
     override fun checkEmail(email: String): Flow<Verifiable> = flow {
@@ -29,19 +30,16 @@ class AuthRepositoryImpl @Inject constructor(
             emit(Violation(authErrorMessageProvider.noSuchAccount))
         }
     }
-//
-//    override fun authorize(
-//            email: String,
-//            password: String
-//    ) = authApi.authorize(email, password)
-//            .doOnSuccess { authHolder.saveAuthData(it) }
-//            .subscribeOn(ioScheduler).ignoreElement()
-//
-//    override fun register(
-//            email: String,
-//            password: String,
-//            name: String
-//    ) = authApi.register(email, password, name)
-//            .doOnSuccess { authHolder.saveAuthData(it) }
-//            .subscribeOn(ioScheduler).ignoreElement()
+
+    override suspend fun signIn(email: String, password: String) {
+        try {
+            authApi.signIn(email, password)
+        } catch (exception: InvalidUsernameException) {
+            throw InvalidCredentialsException(exception, emailViolation = Violation(authErrorMessageProvider.invalidEmail))
+        } catch (exception: InvalidPasswordException) {
+            throw InvalidCredentialsException(exception, passwordViolation = Violation(authErrorMessageProvider.invalidPassword))
+        } catch (exception: UserDisabledException) {
+            throw InvalidCredentialsException(exception, emailViolation = Violation(authErrorMessageProvider.userDisabled))
+        }
+    }
 }

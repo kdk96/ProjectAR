@@ -5,32 +5,39 @@ import com.haroncode.gemini.element.Middleware
 import com.haroncode.gemini.element.Reducer
 import com.haroncode.gemini.store.BaseStore
 import com.kdk96.projectar.auth.domain.AuthDataValidator
+import com.kdk96.projectar.auth.domain.AuthErrorMessageProvider
 import com.kdk96.projectar.auth.domain.AuthRepository
+import com.kdk96.projectar.auth.domain.InvalidCredentialsException
 import com.kdk96.projectar.auth.presentation.signin.SignInStore.Action
 import com.kdk96.projectar.auth.presentation.signin.SignInStore.Effect
 import com.kdk96.projectar.auth.presentation.signin.SignInStore.Event
 import com.kdk96.projectar.auth.presentation.signin.SignInStore.State
 import com.kdk96.projectar.common.domain.ErrorMessageProvider
 import com.kdk96.projectar.common.domain.result.Result
+import com.kdk96.projectar.common.domain.result.UnitResult
+import com.kdk96.projectar.common.domain.result.asError
 import com.kdk96.projectar.common.domain.result.asResult
 import com.kdk96.projectar.common.domain.validation.Unknown
 import com.kdk96.projectar.common.domain.validation.Valid
 import com.kdk96.projectar.common.domain.validation.VerifiableValue
+import com.kdk96.projectar.common.domain.validation.Violation
 import com.kdk96.projectar.common.orEmpty
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.flow
+import com.kdk96.projectar.common.unitFlow
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 
 class SignInStore @Inject constructor(
     authDataValidator: AuthDataValidator,
     authRepository: AuthRepository,
-    errorMessageProvider: ErrorMessageProvider
+    errorMessageProvider: ErrorMessageProvider,
+    authErrorMessageProvider: AuthErrorMessageProvider
 ) : BaseStore<Action, State, Event, Effect>(
     initialState = State(),
     reducer = ReducerImpl(),
-    middleware = MiddlewareImpl(authDataValidator, authRepository),
+    middleware = MiddlewareImpl(authDataValidator, authRepository, authErrorMessageProvider),
     eventProducer = EventProducerImpl(errorMessageProvider)
 ) {
 
@@ -70,33 +77,21 @@ class SignInStore @Inject constructor(
             val password: VerifiableValue<String>
         ) : Effect()
 
-        object SignedIn : Effect()
+        data class SignedIn(
+            val result: UnitResult
+        ) : Effect()
     }
 
     class MiddlewareImpl(
         private val authDataValidator: AuthDataValidator,
-        private val authRepository: AuthRepository
+        private val authRepository: AuthRepository,
+        private val authErrorMessageProvider: AuthErrorMessageProvider
     ) : Middleware<Action, State, Effect> {
 
         override fun execute(action: Action, state: State) = when (action) {
-            Action.SignIn -> signIn(state)
             is Action.ChangeUsername -> changeUsername(action, state)
-            is Action.ChangePassword -> TODO()
-        }
-
-        private fun signIn(state: State) = flow {
-            val email = state.email.value
-            val verifiable = authDataValidator.validateEmail(email)
-
-            if (verifiable == Valid) {
-                val checkResultFlow = authRepository.checkEmail(email)
-                    .map { state.email.copy(verifiable = it) }
-                    .asResult()
-                    .map(Effect::UsernameChecked)
-                emitAll(checkResultFlow)
-            } else {
-                emit(Effect.UsernameChanged(state.email.copy(verifiable = verifiable)))
-            }
+            is Action.ChangePassword -> changePassword(action, state)
+            Action.SignIn -> signIn(state)
         }
 
         private fun changeUsername(action: Action.ChangeUsername, state: State) =
@@ -105,19 +100,81 @@ class SignInStore @Inject constructor(
                     flowOf(Effect.UsernameChanged(VerifiableValue(it, Unknown)))
                 }
                 .orEmpty()
+
+        private fun changePassword(action: Action.ChangePassword, state: State) =
+            action.password.takeIf { it != state.password.value }
+                ?.let {
+                    flowOf(Effect.PasswordChanged(VerifiableValue(it, Unknown)))
+                }
+                .orEmpty()
+
+        private fun signIn(state: State): Flow<Effect> {
+            val email = state.email
+            return if (email.verifiable == Valid) {
+                signIn(email, state.password)
+            } else {
+                checkEmail(email)
+            }
+        }
+
+        private fun signIn(
+            email: VerifiableValue<String>,
+            password: VerifiableValue<String>
+        ): Flow<Effect> = if (password.value.isNotBlank()) {
+            unitFlow {
+                authRepository.signIn(email = email.value, password = password.value)
+            }
+                .asResult()
+                .map<UnitResult, Effect>(Effect::SignedIn)
+                .onStart { emit(Effect.PasswordChanged(password.copy(verifiable = Unknown))) }
+        } else {
+            flowOf(
+                Effect.PasswordChanged(
+                    password.copy(verifiable = Violation(authErrorMessageProvider.emptyPassword))
+                )
+            )
+        }
+
+        private fun checkEmail(email: VerifiableValue<String>): Flow<Effect> {
+            val emailVerifiable = authDataValidator.validateEmail(email.value)
+            return if (emailVerifiable == Valid) {
+                authRepository.checkEmail(email.value)
+                    .map { email.copy(verifiable = it) }
+                    .asResult()
+                    .map(Effect::UsernameChecked)
+            } else {
+                flowOf(Effect.UsernameChanged(email.copy(verifiable = emailVerifiable)))
+            }
+        }
     }
 
     class ReducerImpl : Reducer<State, Effect> {
 
         override fun reduce(state: State, effect: Effect) = when (effect) {
-            is Effect.UsernameChanged -> state.copy(email = effect.username)
+            is Effect.UsernameChanged -> state.copy(
+                email = effect.username,
+                password = VerifiableValue("", Unknown)
+            )
             is Effect.PasswordChanged -> state.copy(password = effect.password)
             is Effect.UsernameChecked -> when (val result = effect.usernameCheckResult) {
                 Result.Loading -> state.copy(isLoading = true)
                 is Result.Data -> state.copy(isLoading = false, email = result.value)
                 is Result.Error -> state.copy(isLoading = false)
             }
-            Effect.SignedIn -> TODO()
+            is Effect.SignedIn -> when (val result = effect.result) {
+                Result.Loading -> state.copy(isLoading = true)
+                is Result.Data -> state.copy(isLoading = false)
+                is Result.Error -> {
+                    val invalidCredentialsException = result.throwable as? InvalidCredentialsException
+                    state.copy(
+                        isLoading = false,
+                        email = invalidCredentialsException?.emailViolation?.let { state.email.copy(verifiable = it) } ?: state.email,
+                        password = invalidCredentialsException?.passwordViolation?.let { state.password.copy(verifiable = it) }
+                            ?: state.password
+                    )
+                }
+            }
+
         }
     }
 
@@ -128,9 +185,15 @@ class SignInStore @Inject constructor(
         override fun produce(state: State, effect: Effect): Event? {
             return when (effect) {
                 is Effect.UsernameChecked -> {
-                    (effect.usernameCheckResult as? Result.Error)?.let {
+                    effect.usernameCheckResult.asError()?.let {
                         Event.Error(errorMessageProvider.provide(it.throwable))
                     }
+                }
+                is Effect.SignedIn -> {
+                    effect.result.asError()
+                        ?.throwable
+                        ?.takeIf { it !is InvalidCredentialsException }
+                        ?.let { Event.Error(errorMessageProvider.provide(it)) }
                 }
                 else -> null
             }

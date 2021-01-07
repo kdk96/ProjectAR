@@ -8,8 +8,3 @@ internal data class FetchProvidersRequestBody(
     @SerialName("identifier") val email: String,
     val continueUri: String = "http://localhost"
 )
-
-@Serializable
-internal data class FetchProvidersResponse(
-    val registered: Boolean
-)

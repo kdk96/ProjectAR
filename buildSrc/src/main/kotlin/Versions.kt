@@ -9,7 +9,7 @@ object Versions {
     const val dagger = "2.30.1"
 
     object android {
-        const val gradlePlugin = "7.0.0-alpha03"
+        const val gradlePlugin = "7.0.0-alpha04"
         const val compileSdk = 30
         const val buildTools = "30.0.3"
         const val minSdk = 21

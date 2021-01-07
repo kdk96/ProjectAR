@@ -17,3 +17,7 @@ sealed class Result<out T> {
 fun <T> Flow<T>.asResult(): Flow<Result<T>> = map { data -> Result.Data(data) }
     .catch<Result<T>> { throwable -> emit(Result.Error(throwable)) }
     .onStart { emit(Result.Loading) }
+
+typealias UnitResult = Result<Unit>
+
+fun <T> Result<T>.asError() = this as? Result.Error

@@ -5,6 +5,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
     fun checkEmail(email: String): Flow<Verifiable>
-//    fun authorize(email: String, password: String): Completable
-//    fun register(email: String, password: String, name: String): Completable
+    suspend fun signIn(email: String, password: String)
 }

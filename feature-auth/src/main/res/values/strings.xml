@@ -17,4 +17,5 @@
     <string name="no_such_account_error">No such account</string>
     <string name="passwords_do_not_match_error">Password must match confirmation password</string>
     <string name="account_collision_error">Account with the given email already exists</string>
+    <string name="user_disabled_error">User disabled</string>
 </resources>

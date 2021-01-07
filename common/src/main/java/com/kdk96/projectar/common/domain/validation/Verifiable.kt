@@ -7,3 +7,5 @@ object Unknown : Verifiable()
 object Valid : Verifiable()
 
 data class Violation(val message: String) : Verifiable()
+
+fun Verifiable.asViolation() = this as? Violation
