@@ -3,10 +3,10 @@ include(
 
     ":app",
 
-    ":feature-auth"
+    ":feature-auth",
 //        ":auth",
-//        ":auth-api",
-//        ":firebase-auth-api",
+    ":auth-api",
+    ":firebase-auth-api"
 //        ":glide",
 //        ":feature-mainflow",
 //        ":feature-settings",

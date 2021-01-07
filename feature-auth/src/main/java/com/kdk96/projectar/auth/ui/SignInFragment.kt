@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
+import com.google.android.material.snackbar.Snackbar
+import com.haroncode.gemini.StoreEventListener
 import com.haroncode.gemini.binder.StoreViewBinding
 import com.kdk96.projectar.auth.presentation.signin.SignInBindingRulesFactory
 import com.kdk96.projectar.auth.presentation.signin.SignInStore
@@ -15,7 +17,8 @@ import com.kdk96.projectar.common.ui.BaseFragment
 import com.kdk96.tanto.android.inject
 import javax.inject.Inject
 
-class SignInFragment : BaseFragment<SignInStore.Action, SignInStore.State>(R.layout.fragment_sign_in) {
+class SignInFragment : BaseFragment<SignInStore.Action, SignInStore.State>(R.layout.fragment_sign_in),
+    StoreEventListener<SignInStore.Event> {
 
     @Inject
     lateinit var bindingRulesFactory: SignInBindingRulesFactory
@@ -53,6 +56,12 @@ class SignInFragment : BaseFragment<SignInStore.Action, SignInStore.State>(R.lay
 
         binding.emailTIL.error = (state.email.verifiable as? Violation)?.message
         binding.passwordTIL.isVisible = state.email.verifiable is Valid
+    }
+
+    override fun onEvent(event: SignInStore.Event) {
+        when (event) {
+            is SignInStore.Event.Error -> Snackbar.make(requireView(), event.message, Snackbar.LENGTH_SHORT).show()
+        }
     }
 
 //

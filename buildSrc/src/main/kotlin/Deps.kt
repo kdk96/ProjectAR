@@ -3,6 +3,7 @@ object Deps {
 
     object kotlinx {
         const val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.kotlinx.coroutines}"
+        const val serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.kotlinx.serialization}"
     }
 
     object android {
@@ -28,6 +29,15 @@ object Deps {
 
     const val gemini = "com.haroncode.gemini:gemini-binder-android:${Versions.gemini}"
     const val geminiDebug = "com.haroncode.gemini:gemini-binder-android-debug:${Versions.gemini}"
+
+    object ktor {
+        const val core = "io.ktor:ktor-client-core:${Versions.ktor}"
+        const val okhttp = "io.ktor:ktor-client-okhttp:${Versions.ktor}"
+        const val logging = "io.ktor:ktor-client-logging:${Versions.ktor}"
+        const val serialization = "io.ktor:ktor-client-serialization:${Versions.ktor}"
+    }
+
+    const val okhttp = "com.squareup.okhttp3:okhttp:${Versions.okhttp}"
 
     const val ktlint = "com.pinterest:ktlint:${Versions.ktlint}"
 }

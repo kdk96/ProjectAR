@@ -1,4 +1,4 @@
-package com.kdk96.auth.data.entity
+package com.kdk96.projectar.auth.data.entity
 
 data class AuthRequestBody(val email: String, val password: String, val returnSecureToken: Boolean = true)
 

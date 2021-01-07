@@ -3,6 +3,7 @@
     <string name="loading">loading…</string>
     <string name="unknown_error">Unknown error</string>
     <string name="network_error">Network error</string>
+    <string name="server_error">Server error</string>
     <string name="retry">Retry</string>
     <string name="prizes">Prizes</string>
 </resources>

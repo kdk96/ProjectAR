@@ -5,8 +5,11 @@ import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.Router
 import com.kdk96.projectar.App
 import com.kdk96.projectar.auth.di.auth.AuthFlowDependencies
+import com.kdk96.projectar.common.domain.ErrorMessageProvider
 import com.kdk96.projectar.common.domain.resource.ResourceProvider
+import com.kdk96.projectar.data.DefaultErrorMessageProvider
 import com.kdk96.projectar.data.resource.AndroidResourceProvider
+import com.kdk96.projectar.di.auth.AuthApiModule
 import com.kdk96.tanto.ComponentDependencies
 import com.kdk96.tanto.Injector
 import com.kdk96.tanto.injectorBuilder
@@ -77,7 +80,7 @@ object AppComponentBuilderModule {
 //        SchedulersModule::class,
         NavigationModule::class,
         ComponentDependenciesModule::class,
-//        AuthApiModule::class,
+        AuthApiModule::class,
 //        AuthModule::class,
 //        GlideModule::class,
 //        AccountModule::class,
@@ -103,10 +106,13 @@ interface AppComponent : Injector<App>,
 
 @Module
 interface AppModule {
-
     @Binds
     @Singleton
     fun bindResourceProvider(androidResourceProvider: AndroidResourceProvider): ResourceProvider
+
+    @Binds
+    @Singleton
+    fun bindErrorMessageProvider(defaultErrorMessageProvider: DefaultErrorMessageProvider): ErrorMessageProvider
 }
 
 //@Module

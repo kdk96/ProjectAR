@@ -3,6 +3,7 @@ package com.kdk96.projectar.auth.di.signin
 import com.kdk96.projectar.auth.domain.AuthDataValidator
 import com.kdk96.projectar.auth.domain.AuthRepository
 import com.kdk96.projectar.auth.ui.SignInFragment
+import com.kdk96.projectar.common.domain.ErrorMessageProvider
 import com.kdk96.projectar.common.domain.resource.ResourceProvider
 import com.kdk96.tanto.ComponentDependencies
 import com.kdk96.tanto.Injector
@@ -35,4 +36,5 @@ interface SignInDependencies : ComponentDependencies {
     fun authDataValidator(): AuthDataValidator
     fun resourceProvider(): ResourceProvider
     fun authRepository(): AuthRepository
+    fun errorMessageProvider(): ErrorMessageProvider
 }

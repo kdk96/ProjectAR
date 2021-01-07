@@ -1,7 +1,5 @@
 package com.kdk96.projectar.auth.domain
 
-import com.kdk96.projectar.auth.screen.R
-import com.kdk96.projectar.common.domain.resource.ResourceProvider
 import com.kdk96.projectar.common.domain.validation.Valid
 import com.kdk96.projectar.common.domain.validation.Violation
 import javax.inject.Inject
@@ -9,12 +7,12 @@ import javax.inject.Singleton
 
 @Singleton
 class AuthDataValidator @Inject constructor(
-    private val resourceProvider: ResourceProvider
+    private val authErrorMessageProvider: AuthErrorMessageProvider
 ) {
 
     fun validateEmail(email: String) = when {
-        email.isBlank() -> Violation(resourceProvider.getString(R.string.empty_email_error))
-        !EMAIL_REGEX.matches(email) -> Violation(resourceProvider.getString(R.string.invalid_email_error))
+        email.isBlank() -> Violation(authErrorMessageProvider.emptyEmail)
+        !EMAIL_REGEX.matches(email) -> Violation(authErrorMessageProvider.invalidEmail)
         else -> Valid
     }
 

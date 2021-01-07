@@ -42,9 +42,21 @@ dependencies {
 
     implementation(Deps.cicerone)
 
+    implementation(Deps.okhttp)
+
+    implementation(Deps.ktor.core)
+    implementation(Deps.ktor.okhttp)
+    implementation(Deps.ktor.logging)
+    implementation(Deps.ktor.serialization)
+
+    implementation(Deps.kotlinx.serialization)
+
     implementation(project(":common"))
 
     implementation(project(":feature-auth"))
+
+    implementation(project(":auth-api"))
+    implementation(project(":firebase-auth-api"))
 
 //    implementation "androidx.appcompat:appcompat:$appcompat_version"
 //

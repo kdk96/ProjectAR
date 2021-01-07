@@ -1,31 +1,32 @@
 package com.kdk96.projectar.auth.data.repository
 
+import com.kdk96.projectar.auth.data.api.AuthApi
+import com.kdk96.projectar.auth.domain.AuthErrorMessageProvider
 import com.kdk96.projectar.auth.domain.AuthRepository
+import com.kdk96.projectar.auth.domain.InvalidUsernameException
+import com.kdk96.projectar.auth.domain.NoSuchAccountException
 import com.kdk96.projectar.common.domain.validation.Valid
 import com.kdk96.projectar.common.domain.validation.Verifiable
 import com.kdk96.projectar.common.domain.validation.Violation
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
-import kotlin.random.Random
 
 class AuthRepositoryImpl @Inject constructor(
-//        private val authApi: AuthApi,
+    private val authApi: AuthApi,
+    private val authErrorMessageProvider: AuthErrorMessageProvider
 //        @Rx.Io private val ioScheduler: Scheduler,
 //        private val authHolder: AuthHolder
 ) : AuthRepository {
 
-    override  fun checkEmail(email: String): Flow<Verifiable> {
-        return flow {
-
-            delay(200)
-            emit( if (Random.nextBoolean()) {
-                Valid
-            } else {
-                Violation("shit")
-            }
-            )
+    override fun checkEmail(email: String): Flow<Verifiable> = flow {
+        try {
+            authApi.checkEmail(email)
+            emit(Valid)
+        } catch (e: InvalidUsernameException) {
+            emit(Violation(authErrorMessageProvider.invalidEmail))
+        } catch (e: NoSuchAccountException) {
+            emit(Violation(authErrorMessageProvider.noSuchAccount))
         }
     }
 //

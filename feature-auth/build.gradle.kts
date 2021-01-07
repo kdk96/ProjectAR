@@ -48,6 +48,8 @@ dependencies {
 
     implementation(project(":common"))
 
+    implementation(project(":auth-api"))
+
 //
 //            implementation "androidx.constraintlayout:constraintlayout:$constraintlayout_version"
 //    implementation "com.google.android.material:material:$material_version"

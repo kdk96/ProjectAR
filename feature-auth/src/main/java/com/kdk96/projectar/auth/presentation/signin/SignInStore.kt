@@ -1,5 +1,6 @@
 package com.kdk96.projectar.auth.presentation.signin
 
+import com.haroncode.gemini.element.EventProducer
 import com.haroncode.gemini.element.Middleware
 import com.haroncode.gemini.element.Reducer
 import com.haroncode.gemini.store.BaseStore
@@ -9,6 +10,7 @@ import com.kdk96.projectar.auth.presentation.signin.SignInStore.Action
 import com.kdk96.projectar.auth.presentation.signin.SignInStore.Effect
 import com.kdk96.projectar.auth.presentation.signin.SignInStore.Event
 import com.kdk96.projectar.auth.presentation.signin.SignInStore.State
+import com.kdk96.projectar.common.domain.ErrorMessageProvider
 import com.kdk96.projectar.common.domain.result.Result
 import com.kdk96.projectar.common.domain.result.asResult
 import com.kdk96.projectar.common.domain.validation.Unknown
@@ -23,15 +25,18 @@ import javax.inject.Inject
 
 class SignInStore @Inject constructor(
     authDataValidator: AuthDataValidator,
-    authRepository: AuthRepository
+    authRepository: AuthRepository,
+    errorMessageProvider: ErrorMessageProvider
 ) : BaseStore<Action, State, Event, Effect>(
     initialState = State(),
     reducer = ReducerImpl(),
-    middleware = MiddlewareImpl(authDataValidator, authRepository)
+    middleware = MiddlewareImpl(authDataValidator, authRepository),
+    eventProducer = EventProducerImpl(errorMessageProvider)
 ) {
 
     data class State(
         val isLoading: Boolean = false,
+        val error: Throwable? = null,
         val email: VerifiableValue<String> = VerifiableValue("", Unknown),
         val password: VerifiableValue<String> = VerifiableValue("", Unknown)
     )
@@ -48,7 +53,9 @@ class SignInStore @Inject constructor(
         object SignIn : Action()
     }
 
-    sealed class Event
+    sealed class Event {
+        data class Error(val message: String) : Event()
+    }
 
     sealed class Effect {
         data class UsernameChanged(
@@ -111,6 +118,22 @@ class SignInStore @Inject constructor(
                 is Result.Error -> state.copy(isLoading = false)
             }
             Effect.SignedIn -> TODO()
+        }
+    }
+
+    class EventProducerImpl(
+        private val errorMessageProvider: ErrorMessageProvider
+    ) : EventProducer<State, Effect, Event> {
+
+        override fun produce(state: State, effect: Effect): Event? {
+            return when (effect) {
+                is Effect.UsernameChecked -> {
+                    (effect.usernameCheckResult as? Result.Error)?.let {
+                        Event.Error(errorMessageProvider.provide(it.throwable))
+                    }
+                }
+                else -> null
+            }
         }
     }
 }
